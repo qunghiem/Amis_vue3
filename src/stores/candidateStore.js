@@ -93,9 +93,8 @@ export const useCandidateStore = defineStore('candidates', () => {
 
   // thêm ứng viên
   function addCandidate(data) {
-    const maxId = candidates.value.reduce((m, c) => {
-      c.employeeId > m ? c.employeeId : m, 0
-    })
+    const maxId = candidates.value.reduce((m, c) => (c.employeeId > m ? c.employeeId : m, 0)
+    )
 
     candidates.value.unshift({
       ...data, employeeId: maxId + 1, avatar: data.avatar || DEFAULT_AVATAR
@@ -108,24 +107,17 @@ export const useCandidateStore = defineStore('candidates', () => {
 
 
   function updateCandidate(data) {
-    const idx = candidates.value.findIndex(c => {
-      c.employeeId === data.employeeId
-    })
-
-    if (idx === -1) return false
-
-    candidates.value[idx] = {
-      ...candidates.value[idx], ...data
-    }
-
-    persist()
-    return true
-  }
+  const idx = candidates.value.findIndex(c => c.employeeId === data.employeeId)
+  if (idx === -1) return false
+  candidates.value[idx] = { ...candidates.value[idx], ...data }
+  persist()
+  return true
+}
 
   // xóa 1 ứng viên theo ID
   function deleteById(id) {
     candidates.value = candidates.value.filter(c => {
-      c.employeeId !== Number(id)
+      return c.employeeId !== Number(id)
     })
     selectedIds.value.delete(Number(id))
     persist()
@@ -135,7 +127,7 @@ export const useCandidateStore = defineStore('candidates', () => {
   function deleteByIds(ids) {
     const numSet = new Set(ids.map(Number))
     candidates.value = candidates.value.filter(c => {
-      !numSet.has(c.employeeId)
+      return !numSet.has(c.employeeId)
     })
     ids.forEach(id => {
       selectedIds.value.delete(Number(id))
@@ -145,9 +137,7 @@ export const useCandidateStore = defineStore('candidates', () => {
 
   // lấy ứng viên theo ID
   function getById(id) {
-    return candidates.value.find(c => {
-      c.employeeId === Number(id)
-    }) || null
+    return candidates.value.find(c => c.employeeId === Number(id)) || null
   }
 
   //
