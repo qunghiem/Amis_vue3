@@ -1,6 +1,5 @@
 <template>
   <main class="layout__content">
-    
     <!-- Title header -->
     <div class="title__header">
       <div class="title__left">Ứng viên</div>
@@ -18,7 +17,10 @@
 
     <div class="content">
       <!-- Selection toolbar -->
-      <div class="selected_content" :class="store.selectedCount > 0 ? 'display-flex' : 'display-none'">
+      <div
+        class="selected_content"
+        :class="store.selectedCount > 0 ? 'display-flex' : 'display-none'"
+      >
         <p class="selected-count">{{ store.selectedCount }} đang chọn</p>
         <button class="unselect" @click="store.unselectAll()">Bỏ chọn</button>
         <OverflowMenu @action="handleMenuAction" />
@@ -33,7 +35,7 @@
             placeholder="Tìm kiếm hoặc nhờ AI trợ giúp"
             :value="store.searchKeyword"
             @input="onSearch"
-          >
+          />
         </div>
         <div class="content__feature">
           <div class="filter"><div class="icon"></div></div>
@@ -44,21 +46,22 @@
       </div>
 
       <!-- Table -->
-      <CandidateTable
-        :candidates="store.pageData"
-        @edit="openEditModal"
-        @delete="handleDelete"
-      />
+      <CandidateTable :candidates="store.pageData" @edit="openEditModal" @delete="handleDelete" />
 
       <!-- Footer pagination -->
       <div class="foot-table">
         <div class="total-record">Tổng bản ghi: {{ store.pageInfo.total }}</div>
         <div class="total-page">
           Số bản ghi/trang
-          <select :value="store.pageSize" @change="e => store.setPageSize(Number(e.target.value))">
-            <option v-for="n in [5,10,15,25,50,100]" :key="n" :value="n">{{ n }}</option>
+          <select
+            :value="store.pageSize"
+            @change="(e) => store.setPageSize(Number(e.target.value))"
+          >
+            <option v-for="n in [5, 10, 15, 25, 50, 100]" :key="n" :value="n">{{ n }}</option>
           </select>
-          <div class="desc index-record">{{ store.pageInfo.start }} - {{ store.pageInfo.end }} bản ghi</div>
+          <div class="desc index-record">
+            {{ store.pageInfo.start }} - {{ store.pageInfo.end }} bản ghi
+          </div>
           <div class="prev-next">
             <button class="prev" :disabled="store.isFirstPage" @click="store.prevPage()"></button>
             <button class="next" :disabled="store.isLastPage" @click="store.nextPage()"></button>

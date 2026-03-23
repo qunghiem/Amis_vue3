@@ -1,13 +1,12 @@
 <template>
+  <!-- sử dụng teleport để render ra body, k vào DOM -->
   <teleport to="body">
     <div class="toast-container">
+
+      <!-- sử dụng transition-group để aminate danh sách nhiều phần tử khi nhiều toast cùng lúc -->
+      <!-- đặt name= "toast" cho các clas action: leave, enter,... -->
       <transition-group name="toast">
-        <div
-          v-for="toast in toasts"
-          :key="toast.id"
-          class="toast"
-          :class="`toast--${toast.type}`"
-        >
+        <div v-for="toast in toasts" :key="toast.id" class="toast" :class="`toast--${toast.type}`">
           <span v-if="toast.type === 'loading'" class="toast-spinner"></span>
           <span v-else-if="toast.type === 'success'">✅</span>
           <span v-else>❌</span>
@@ -43,23 +42,48 @@ const { toasts } = useToast()
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
-.toast--success { background: #166534; }
-.toast--error   { background: #991b1b; }
-.toast--loading { background: #1e40af; }
+.toast--success {
+  background: #166534;
+}
+.toast--error {
+  background: #991b1b;
+}
+.toast--loading {
+  background: #1e40af;
+}
 
 .toast-spinner {
-  width: 14px; height: 14px;
-  border: 2px solid rgba(255,255,255,0.3);
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-.toast-enter-active, .toast-leave-active { transition: all 0.3s ease; }
-.toast-enter-from { opacity: 0; transform: translateY(16px); }
-.toast-leave-to   { opacity: 0; transform: translateX(40px); }
+/* toast đang vào, đang ra  */
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+/* toast từ dưới đi lên  */
+.toast-enter-from {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* khi mất, toast trượt sang trái  */
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(40px);
+}
 </style>

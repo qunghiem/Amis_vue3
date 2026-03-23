@@ -9,12 +9,17 @@
         class="btn-selected"
         :data-id="item.id"
         @click="emit('action', item.id)"
-      >{{ item.label }}</button>
+      >
+        {{ item.label }}
+      </button>
     </div>
 
-    <div class="overflow-menu__more-btn" :class="{ open: dropdownOpen }" v-if="overflowItems.length">
-      <button class="overflow-menu__trigger" @click.stop="dropdownOpen = !dropdownOpen">
-      </button>
+    <div
+      class="overflow-menu__more-btn"
+      :class="{ open: dropdownOpen }"
+      v-if="overflowItems.length"
+    >
+      <button class="overflow-menu__trigger" @click.stop="dropdownOpen = !dropdownOpen"></button>
       <div class="overflow-menu__dropdown">
         <div
           v-for="item in overflowItems"
@@ -22,7 +27,9 @@
           class="overflow-menu__dropdown-item"
           :data-id="item.id"
           @click="handleDropdownClick(item.id)"
-        >{{ item.label }}</div>
+        >
+          {{ item.label }}
+        </div>
       </div>
     </div>
   </div>
@@ -34,22 +41,22 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 const emit = defineEmits(['action'])
 
 const MENU_ITEMS = [
-  { id: 'send-email',      label: 'Gửi email' },
-  { id: 'tag-manager',     label: 'Quản lý thẻ' },
-  { id: 'create-job',      label: 'Tạo công việc' },
-  { id: 'add-campaign',    label: 'Thêm vào chiến dịch' },
-  { id: 'to-talent-pool',  label: 'Chuyển vào kho tiềm năng' },
-  { id: 'move-news',       label: 'Chuyển đến tin khác' },
-  { id: 'bulk-update',     label: 'Cập nhật hàng loạt' },
-  { id: 'download-cv',     label: 'Tải xuống CV' },
-  { id: 'export',          label: 'Xuất khẩu' },
+  { id: 'send-email', label: 'Gửi email' },
+  { id: 'tag-manager', label: 'Quản lý thẻ' },
+  { id: 'create-job', label: 'Tạo công việc' },
+  { id: 'add-campaign', label: 'Thêm vào chiến dịch' },
+  { id: 'to-talent-pool', label: 'Chuyển vào kho tiềm năng' },
+  { id: 'move-news', label: 'Chuyển đến tin khác' },
+  { id: 'bulk-update', label: 'Cập nhật hàng loạt' },
+  { id: 'download-cv', label: 'Tải xuống CV' },
+  { id: 'export', label: 'Xuất khẩu' },
   { id: 'delete-selected', label: 'Xóa ứng viên đã chọn' },
 ]
 
 const containerRef = ref(null)
-const visibleRef   = ref(null)
+const visibleRef = ref(null)
 const dropdownOpen = ref(false)
-const visibleItems  = ref([...MENU_ITEMS])
+const visibleItems = ref([...MENU_ITEMS])
 const overflowItems = ref([])
 
 // Cache measured widths
@@ -70,25 +77,29 @@ function measureWidth(label) {
 function recalc() {
   if (!containerRef.value) return
   const totalWidth = containerRef.value.getBoundingClientRect().width
-  const MORE_BTN = 90, GAP = 6
+  const MORE_BTN = 90,
+    GAP = 6
 
   const totalAll = MENU_ITEMS.reduce((s, item) => s + measureWidth(item.label), 0)
 
   if (totalAll <= totalWidth) {
-    visibleItems.value  = [...MENU_ITEMS]
+    visibleItems.value = [...MENU_ITEMS]
     overflowItems.value = []
     return
   }
 
   const budget = totalWidth - MORE_BTN - GAP
-  const vis = [], ovf = []
+  const vis = [],
+    ovf = []
   let used = 0
   for (const item of MENU_ITEMS) {
     const w = measureWidth(item.label)
-    if (used + w <= budget) { vis.push(item); used += w }
-    else ovf.push(item)
+    if (used + w <= budget) {
+      vis.push(item)
+      used += w
+    } else ovf.push(item)
   }
-  visibleItems.value  = vis
+  visibleItems.value = vis
   overflowItems.value = ovf
 }
 

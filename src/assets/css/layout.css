@@ -47,8 +47,12 @@
   cursor: pointer;
 }
 
-.recruitment-page:hover .recruitment-page__icon { background-color: #007bff; }
-.recruitment-page:hover .recruitment-page__text { color: #007bff; }
+.recruitment-page:hover .recruitment-page__icon {
+  background-color: #007bff;
+}
+.recruitment-page:hover .recruitment-page__text {
+  color: #007bff;
+}
 
 .recruitment-page__icon {
   -webkit-mask-image: url(https://amisplatform.misacdn.net/apps/recruit2/assets/images/ICON.svg);
@@ -98,13 +102,18 @@
   cursor: pointer;
 }
 
-.icon-header { padding: 5px; }
+.icon-header {
+  padding: 5px;
+}
 .icon-header:hover {
   background-color: #e6ecf5 !important;
   border-radius: 50%;
 }
 
-.header__title { font-size: 18px; font-weight: 500; }
+.header__title {
+  font-size: 18px;
+  font-weight: 500;
+}
 
 .header__search {
   flex: 1;
@@ -124,8 +133,8 @@
 }
 
 .header__search::before {
-  content: "\f002";
-  font-family: "Font Awesome 6 Free";
+  content: '\f002';
+  font-family: 'Font Awesome 6 Free';
   font-weight: 900;
   position: absolute;
   left: 10px;
@@ -134,7 +143,9 @@
   color: #a19f9f;
 }
 
-.header__search input:focus { outline: none; }
+.header__search input:focus {
+  outline: none;
+}
 
 /* CSS cho sidebar  */
 .layout {
@@ -179,15 +190,22 @@
   border-radius: 5px;
 }
 
-.sidebar--acitve { background-color: #2680eb; font-weight: 600; }
+.sidebar--acitve {
+  background-color: #2680eb;
+  font-weight: 600;
+}
 
 .sidebar__item:hover .sidebar__container {
   background-color: rgba(255, 255, 255, 0.15);
   cursor: pointer;
 }
 
-.sidebar__item:hover .sidebar--acitve { background-color: #2680eb; }
-.sidebar--acitve .sidebar-text { color: #fff; }
+.sidebar__item:hover .sidebar--acitve {
+  background-color: #2680eb;
+}
+.sidebar--acitve .sidebar-text {
+  color: #fff;
+}
 
 .sidebar__icon {
   background-color: #fff;
@@ -296,11 +314,13 @@
 }
 
 .layout__sidebar.collapsed .sidebar__toggle {
-    justify-content: center;
-    width: 70%;
+  justify-content: center;
+  width: 70%;
 }
 
-.sidebar__toggle .toggle-label { font-weight: 600; }
+.sidebar__toggle .toggle-label {
+  font-weight: 600;
+}
 
 .layout__sidebar.collapsed {
   width: 70px;
@@ -309,9 +329,15 @@
   padding-right: 10px;
 }
 
-.layout__sidebar.collapsed .sidebar-text { display: none; }
-.layout__sidebar.collapsed .sidebar__toggle .toggle-label { display: none; }
-.layout__sidebar.collapsed .sidebar__container { justify-content: center; }
+.layout__sidebar.collapsed .sidebar-text {
+  display: none;
+}
+.layout__sidebar.collapsed .sidebar__toggle .toggle-label {
+  display: none;
+}
+.layout__sidebar.collapsed .sidebar__container {
+  justify-content: center;
+}
 
 .layout__sidebar.collapsed .icon-toogle {
   -webkit-mask-image: url(https://amisplatform.misacdn.net/apps/recruit2/assets/images/ICON.svg);

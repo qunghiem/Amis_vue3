@@ -1,8 +1,8 @@
 <template>
   <div class="form__header">
     <div class="form__header__title">{{ title }}</div>
-    <div class="mi__icon" @click="$emit('close')" style="cursor:pointer;padding:4px;">
-      <i class="fa-solid fa-xmark" style="font-size:18px;color:#6b7280;"></i>
+    <div class="mi__icon" @click="$emit('close')" style="cursor: pointer; padding: 4px">
+      <i class="fa-solid fa-xmark" style="font-size: 18px; color: #6b7280"></i>
     </div>
   </div>
 
@@ -26,7 +26,7 @@
       <div class="cv-uploaded-info" v-if="currentCV">
         <div class="cv-uploaded-title">
           <div class="cv-file-icon">
-            <i :class="`fa-solid ${cvIcon}`" style="font-size:16px;display:none"></i>
+            <i :class="`fa-solid ${cvIcon}`" style="font-size: 16px; display: none"></i>
           </div>
           <div class="cv-info-text">
             <div class="cv-info-name">{{ currentCV.name }}</div>
@@ -35,7 +35,13 @@
         </div>
         <button class="cv-reupload-btn" @click.stop="cvInput?.click()">Tải CV khác</button>
       </div>
-      <input type="file" ref="cvInput" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png" style="display:none" @change="onCVInputChange">
+      <input
+        type="file"
+        ref="cvInput"
+        accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+        style="display: none"
+        @change="onCVInputChange"
+      />
     </div>
 
     <div class="form__content__infor">
@@ -43,8 +49,8 @@
       <div class="form__content_avatar">
         <div class="avatar-upload-wrapper" @click="avatarInput?.click()">
           <div class="form__content_img" id="avatar-preview-box">
-            <img v-if="currentAvatar" :src="currentAvatar" alt="Avatar">
-            <span v-else style="font-size:12px;color:#9ca3af;">Ảnh</span>
+            <img v-if="currentAvatar" :src="currentAvatar" alt="Avatar" />
+            <span v-else style="font-size: 12px; color: #9ca3af">Ảnh</span>
           </div>
           <div class="avatar-upload-overlay">
             <i class="fa-solid fa-camera overlay-icon"></i>
@@ -59,7 +65,13 @@
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-        <input type="file" ref="avatarInput" accept="image/*" style="display:none" @change="onAvatarInputChange">
+        <input
+          type="file"
+          ref="avatarInput"
+          accept="image/*"
+          style="display: none"
+          @change="onAvatarInputChange"
+        />
       </div>
 
       <!-- Fields -->
@@ -67,7 +79,13 @@
         <div class="ms__row">
           <label class="ms__label">Họ và tên <span class="ms__require">*</span></label>
           <div class="ms__input">
-            <input id="input-fullName" type="text" placeholder="Nhập họ và tên" v-model="localForm.fullName" :class="{ 'is-invalid': errors.fullName }">
+            <input
+              id="input-fullName"
+              type="text"
+              placeholder="Nhập họ và tên"
+              v-model="localForm.fullName"
+              :class="{ 'is-invalid': errors.fullName }"
+            />
             <div v-if="errors.fullName" class="field-error">{{ errors.fullName }}</div>
           </div>
         </div>
@@ -75,7 +93,12 @@
           <div>
             <label class="ms__label">Ngày sinh <span class="ms__require">*</span></label>
             <div class="ms__input">
-              <input id="input-dob" type="date" v-model="localForm.dob" :class="{ 'is-invalid': errors.dob }">
+              <input
+                id="input-dob"
+                type="date"
+                v-model="localForm.dob"
+                :class="{ 'is-invalid': errors.dob }"
+              />
               <div v-if="errors.dob" class="field-error">{{ errors.dob }}</div>
             </div>
           </div>
@@ -93,20 +116,30 @@
         </div>
         <div class="ms__row">
           <label class="ms__label">Khu vực <span class="ms__require">*</span></label>
-          <div class="ms__input"><input type="text" v-model="localForm.area"></div>
+          <div class="ms__input"><input type="text" v-model="localForm.area" /></div>
         </div>
         <div class="ms__row ms__flex">
           <div>
             <label class="ms__label">Số điện thoại</label>
             <div class="ms__input">
-              <input type="text" placeholder="Nhập số điện thoại" v-model="localForm.phoneNumber" :class="{ 'is-invalid': errors.phoneNumber }">
+              <input
+                type="text"
+                placeholder="Nhập số điện thoại"
+                v-model="localForm.phoneNumber"
+                :class="{ 'is-invalid': errors.phoneNumber }"
+              />
               <div v-if="errors.phoneNumber" class="field-error">{{ errors.phoneNumber }}</div>
             </div>
           </div>
           <div>
             <label class="ms__label">Email</label>
             <div class="ms__input">
-              <input type="email" placeholder="Nhập email" v-model="localForm.email" :class="{ 'is-invalid': errors.email }">
+              <input
+                type="email"
+                placeholder="Nhập email"
+                v-model="localForm.email"
+                :class="{ 'is-invalid': errors.email }"
+              />
               <div v-if="errors.email" class="field-error">{{ errors.email }}</div>
             </div>
           </div>
@@ -114,7 +147,12 @@
         <div class="ms__row">
           <label class="ms__label">Quốc gia <span class="ms__require">*</span></label>
           <div class="ms__input">
-            <input type="text" placeholder="Nhập quốc gia" v-model="localForm.country" :class="{ 'is-invalid': errors.country }">
+            <input
+              type="text"
+              placeholder="Nhập quốc gia"
+              v-model="localForm.country"
+              :class="{ 'is-invalid': errors.country }"
+            />
             <div v-if="errors.country" class="field-error">{{ errors.country }}</div>
           </div>
         </div>
@@ -140,22 +178,44 @@
         </div>
         <div class="ms__row">
           <label class="ms__label">Địa chỉ <span class="ms__require">*</span></label>
-          <div class="ms__input"><input type="text" placeholder="Nhập địa chỉ" v-model="localForm.address"></div>
+          <div class="ms__input">
+            <input type="text" placeholder="Nhập địa chỉ" v-model="localForm.address" />
+          </div>
         </div>
 
         <div class="form__section">
           <div class="form__section__title">HỌC VẤN</div>
           <div class="ms__row ms__flex">
             <div><label class="ms__label">Trình độ đào tạo</label></div>
-            <div><div class="ms__input"><input type="text" placeholder="Nhập trình độ đào tạo" v-model="localForm.educationLevel"></div></div>
+            <div>
+              <div class="ms__input">
+                <input
+                  type="text"
+                  placeholder="Nhập trình độ đào tạo"
+                  v-model="localForm.educationLevel"
+                />
+              </div>
+            </div>
           </div>
           <div class="ms__row ms__flex">
             <div><label class="ms__label">Nơi đào tạo</label></div>
-            <div><div class="ms__input"><input type="text" placeholder="Nhập nơi đào tạo" v-model="localForm.educationPlace"></div></div>
+            <div>
+              <div class="ms__input">
+                <input
+                  type="text"
+                  placeholder="Nhập nơi đào tạo"
+                  v-model="localForm.educationPlace"
+                />
+              </div>
+            </div>
           </div>
           <div class="ms__row ms__flex">
             <div><label class="ms__label">Chuyên ngành</label></div>
-            <div><div class="ms__input"><input type="text" placeholder="Nhập chuyên ngành" v-model="localForm.major"></div></div>
+            <div>
+              <div class="ms__input">
+                <input type="text" placeholder="Nhập chuyên ngành" v-model="localForm.major" />
+              </div>
+            </div>
           </div>
           <div class="form__add">+ Thêm học vấn</div>
         </div>
@@ -163,7 +223,7 @@
         <div class="ms__row ms__flex">
           <div>
             <label class="ms__label">Ngày ứng tuyển <span class="ms__require">*</span></label>
-            <div class="ms__input"><input type="date" v-model="localForm.applicationDate"></div>
+            <div class="ms__input"><input type="date" v-model="localForm.applicationDate" /></div>
           </div>
           <div>
             <label class="ms__label">Nguồn ứng viên</label>
@@ -204,7 +264,13 @@
         </div>
         <div class="ms__row">
           <label class="ms__label">Nơi làm việc gần đây</label>
-          <div class="ms__input"><input type="text" placeholder="Nhập nơi làm việc gần đây" v-model="localForm.recentWorkplace"></div>
+          <div class="ms__input">
+            <input
+              type="text"
+              placeholder="Nhập nơi làm việc gần đây"
+              v-model="localForm.recentWorkplace"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -242,20 +308,26 @@ const cvIcon = computed(() => {
   return 'fa-file-word'
 })
 
-// ── Avatar ────────────────────────────────────────────────
+// Avatar
 function onAvatarInputChange(e) {
   const file = e.target.files[0]
   if (!file) return
-  if (!file.type.startsWith('image/')) { alert('Chỉ chấp nhận file ảnh!'); return }
-  if (file.size > 5 * 1024 * 1024) { alert('Ảnh không được vượt quá 5MB!'); return }
+  if (!file.type.startsWith('image/')) {
+    alert('Chỉ chấp nhận file ảnh!')
+    return
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Ảnh không được vượt quá 5MB!')
+    return
+  }
   const reader = new FileReader()
-  reader.onload = ev => emit('avatar-change', ev.target.result)
+  reader.onload = (ev) => emit('avatar-change', ev.target.result)
   reader.readAsDataURL(file)
   e.target.value = ''
 }
 
-// ── CV ────────────────────────────────────────────────────
-const CV_EXT = ['.doc','.docx','.pdf','.jpg','.jpeg','.png']
+// CV
+const CV_EXT = ['.doc', '.docx', '.pdf', '.jpg', '.jpeg', '.png']
 const CV_MAX = 15 * 1024 * 1024
 
 function formatSize(bytes) {
@@ -266,10 +338,22 @@ function formatSize(bytes) {
 
 function handleCVFile(file) {
   const ext = '.' + file.name.split('.').pop().toLowerCase()
-  if (!CV_EXT.includes(ext)) { alert('Chỉ chấp nhận file .doc, .docx, .pdf, .jpg, .jpeg, .png'); return }
-  if (file.size > CV_MAX) { alert('Dung lượng file không được vượt quá 15MB!'); return }
+  if (!CV_EXT.includes(ext)) {
+    alert('Chỉ chấp nhận file .doc, .docx, .pdf, .jpg, .jpeg, .png')
+    return
+  }
+  if (file.size > CV_MAX) {
+    alert('Dung lượng file không được vượt quá 15MB!')
+    return
+  }
   const reader = new FileReader()
-  reader.onload = ev => emit('cv-change', { name: file.name, size: formatSize(file.size), type: file.type, dataUrl: ev.target.result })
+  reader.onload = (ev) =>
+    emit('cv-change', {
+      name: file.name,
+      size: formatSize(file.size),
+      type: file.type,
+      dataUrl: ev.target.result,
+    })
   reader.readAsDataURL(file)
 }
 

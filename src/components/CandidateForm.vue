@@ -11,17 +11,40 @@
             <div class="spinner"></div>
             <span>Đang tải CV...</span>
           </div>
-          <iframe v-if="currentCV.type === 'application/pdf'" :src="currentCV.dataUrl" title="CV" @load="cvLoading = false"></iframe>
-          <img v-else-if="currentCV.type?.startsWith('image/')" class="cv-image-preview" :src="currentCV.dataUrl" alt="CV">
+          <iframe
+            v-if="currentCV.type === 'application/pdf'"
+            :src="currentCV.dataUrl"
+            title="CV"
+            @load="cvLoading = false"
+          ></iframe>
+          <img
+            v-else-if="currentCV.type?.startsWith('image/')"
+            class="cv-image-preview"
+            :src="currentCV.dataUrl"
+            alt="CV"
+          />
           <div v-else class="cv-loading">
-            <i class="fa-solid fa-file-word" style="font-size:44px;color:#2970f6;margin-bottom:6px;"></i>
+            <i
+              class="fa-solid fa-file-word"
+              style="font-size: 44px; color: #2970f6; margin-bottom: 6px"
+            ></i>
             <span>Không thể xem trước file Word</span>
-            <span style="font-size:11px;color:#d1d5db;">{{ currentCV.name }}</span>
+            <span style="font-size: 11px; color: #d1d5db">{{ currentCV.name }}</span>
           </div>
         </div>
       </div>
       <!-- Form panel (right) -->
-      <div class="form__container" style="border-radius:0;box-shadow:none;position:static;transform:none;width:550px;min-width:420px;">
+      <div
+        class="form__container"
+        style="
+          border-radius: 0;
+          box-shadow: none;
+          position: static;
+          transform: none;
+          width: 550px;
+          min-width: 420px;
+        "
+      >
         <FormInner
           :title="title"
           :form="form"
@@ -76,40 +99,60 @@ const cvLoading = ref(false)
 const errors = ref({})
 
 const EMPTY_FORM = () => ({
-  fullName: '', phoneNumber: '', email: '', country: '',
-  dob: '', gender: '', area: '', province: 'Hà Nội', ward: '1',
-  address: '', educationLevel: '', educationPlace: '', major: '',
+  fullName: '',
+  phoneNumber: '',
+  email: '',
+  country: '',
+  dob: '',
+  gender: '',
+  area: '',
+  province: 'Hà Nội',
+  ward: '1',
+  address: '',
+  educationLevel: '',
+  educationPlace: '',
+  major: '',
   applicationDate: new Date().toISOString().slice(0, 10),
-  candidateSource: '', recentWorkplace: '', recruiter: '', collaborator: '',
+  candidateSource: '',
+  recentWorkplace: '',
+  recruiter: '',
+  collaborator: '',
 })
 const form = ref(EMPTY_FORM())
 
-watch(() => props.visible, (v) => {
-  if (!v) return
-  errors.value = {}
-  if (props.editingCandidate) {
-    title.value = 'Chỉnh sửa thông tin ứng viên'
-    Object.assign(form.value, props.editingCandidate)
-    currentAvatar.value = props.editingCandidate.avatar || null
-    if (props.editingCandidate.cv) {
-      currentCV.value = props.editingCandidate.cv
-      cvLoading.value = true
+watch(
+  () => props.visible,
+  (v) => {
+    if (!v) return
+    errors.value = {}
+    if (props.editingCandidate) {
+      title.value = 'Chỉnh sửa thông tin ứng viên'
+      Object.assign(form.value, props.editingCandidate)
+      currentAvatar.value = props.editingCandidate.avatar || null
+      if (props.editingCandidate.cv) {
+        currentCV.value = props.editingCandidate.cv
+        cvLoading.value = true
+      } else {
+        currentCV.value = null
+      }
     } else {
+      title.value = 'Thêm ứng viên'
+      form.value = EMPTY_FORM()
+      currentAvatar.value = null
       currentCV.value = null
     }
-  } else {
-    title.value = 'Thêm ứng viên'
-    form.value = EMPTY_FORM()
-    currentAvatar.value = null
-    currentCV.value = null
-  }
-})
+  },
+)
 
-// ── Avatar ────────────────────────────────────────────────
-function onAvatarChange(dataUrl) { currentAvatar.value = dataUrl }
-function onAvatarRemove() { currentAvatar.value = null }
+// Avatar
+function onAvatarChange(dataUrl) {
+  currentAvatar.value = dataUrl
+}
+function onAvatarRemove() {
+  currentAvatar.value = null
+}
 
-// ── CV ────────────────────────────────────────────────────
+//CV
 function onCVChange(cvObj) {
   currentCV.value = cvObj
   cvLoading.value = true
@@ -118,7 +161,7 @@ function triggerCVInput() {
   // forwarded from FormInner → triggers file input click
 }
 
-// ── Validate ──────────────────────────────────────────────
+// Validate
 function validate() {
   const e = {}
   if (!form.value.fullName) e.fullName = 'Vui lòng nhập họ và tên'

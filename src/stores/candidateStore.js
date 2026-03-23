@@ -4,7 +4,8 @@ import { ref, computed } from 'vue'
 import { employees as defaultData } from '@/data/candidates'
 
 const STORAGE_KEY = 'candidates_data'
-const DEFAULT_AVATAR = 'https://amisplatform.misacdn.net/APIS/PlatformAPI/api/Avatar/77b8feac-dfe5-4b47-b1ff-ac9a2eaced5a/LT0YJBOP.jpg?avatarID=03762a31-c8c5-45ae-887b-17bcdc47043b&width=64&height=64'
+const DEFAULT_AVATAR =
+  'https://amisplatform.misacdn.net/APIS/PlatformAPI/api/Avatar/77b8feac-dfe5-4b47-b1ff-ac9a2eaced5a/LT0YJBOP.jpg?avatarID=03762a31-c8c5-45ae-887b-17bcdc47043b&width=64&height=64'
 
 export const useCandidateStore = defineStore('candidates', () => {
   // biến lưu danh sách ứng viên
@@ -40,10 +41,11 @@ export const useCandidateStore = defineStore('candidates', () => {
   const filteredCandidates = computed(() => {
     const keyWord = searchKeyword.value.trim().toLowerCase()
     if (!keyWord) return candidates.value
-    return candidates.value.filter(c =>
-      c.fullName?.toLowerCase().includes(keyWord) ||
-      c.phoneNumber?.toLowerCase().includes(keyWord) ||
-      c.email?.toLowerCase().includes(keyWord)
+    return candidates.value.filter(
+      (c) =>
+        c.fullName?.toLowerCase().includes(keyWord) ||
+        c.phoneNumber?.toLowerCase().includes(keyWord) ||
+        c.email?.toLowerCase().includes(keyWord),
     )
   })
 
@@ -88,16 +90,18 @@ export const useCandidateStore = defineStore('candidates', () => {
 
   // set size cho page
   function setPageSize(size) {
-    pageSize.value = size; resetPage()
+    pageSize.value = size
+    resetPage()
   }
 
   // thêm ứng viên
   function addCandidate(data) {
-    const maxId = candidates.value.reduce((m, c) => (c.employeeId > m ? c.employeeId : m, 0)
-    )
+    const maxId = candidates.value.reduce((m, c) => Math.max(m, c.employeeId), 0)
 
     candidates.value.unshift({
-      ...data, employeeId: maxId + 1, avatar: data.avatar || DEFAULT_AVATAR
+      ...data,
+      employeeId: maxId + 1,
+      avatar: data.avatar || DEFAULT_AVATAR,
     })
 
     persist()
@@ -105,18 +109,17 @@ export const useCandidateStore = defineStore('candidates', () => {
     resetPage()
   }
 
-
   function updateCandidate(data) {
-  const idx = candidates.value.findIndex(c => c.employeeId === data.employeeId)
-  if (idx === -1) return false
-  candidates.value[idx] = { ...candidates.value[idx], ...data }
-  persist()
-  return true
-}
+    const idx = candidates.value.findIndex((c) => c.employeeId === data.employeeId)
+    if (idx === -1) return false
+    candidates.value[idx] = { ...candidates.value[idx], ...data }
+    persist()
+    return true
+  }
 
   // xóa 1 ứng viên theo ID
   function deleteById(id) {
-    candidates.value = candidates.value.filter(c => {
+    candidates.value = candidates.value.filter((c) => {
       return c.employeeId !== Number(id)
     })
     selectedIds.value.delete(Number(id))
@@ -126,10 +129,10 @@ export const useCandidateStore = defineStore('candidates', () => {
   // xóa nhiều ứng viên theo ID
   function deleteByIds(ids) {
     const numSet = new Set(ids.map(Number))
-    candidates.value = candidates.value.filter(c => {
+    candidates.value = candidates.value.filter((c) => {
       return !numSet.has(c.employeeId)
     })
-    ids.forEach(id => {
+    ids.forEach((id) => {
       selectedIds.value.delete(Number(id))
     })
     persist()
@@ -137,7 +140,7 @@ export const useCandidateStore = defineStore('candidates', () => {
 
   // lấy ứng viên theo ID
   function getById(id) {
-    return candidates.value.find(c => c.employeeId === Number(id)) || null
+    return candidates.value.find((c) => c.employeeId === Number(id)) || null
   }
 
   //
@@ -150,7 +153,7 @@ export const useCandidateStore = defineStore('candidates', () => {
   }
 
   function selectAll(ids) {
-    ids.forEach(id => selectedIds.value.add(Number(id)))
+    ids.forEach((id) => selectedIds.value.add(Number(id)))
     selectedIds.value = new Set(selectedIds.value)
   }
 
@@ -166,11 +169,33 @@ export const useCandidateStore = defineStore('candidates', () => {
   const selectedIdList = computed(() => Array.from(selectedIds.value))
 
   return {
-    candidates, searchKeyword, currentPage, pageSize, selectedIds,
-    filteredCandidates, totalFiltered, pageData, isFirstPage, isLastPage, pageInfo,
-    init, nextPage, prevPage, resetPage, setPageSize,
-    addCandidate, updateCandidate, deleteById, deleteByIds, getById,
-    toggleSelect, selectAll, unselectAll, isSelected, selectedCount, selectedIdList,
+    candidates,
+    searchKeyword,
+    currentPage,
+    pageSize,
+    selectedIds,
+    filteredCandidates,
+    totalFiltered,
+    pageData,
+    isFirstPage,
+    isLastPage,
+    pageInfo,
+    init,
+    nextPage,
+    prevPage,
+    resetPage,
+    setPageSize,
+    addCandidate,
+    updateCandidate,
+    deleteById,
+    deleteByIds,
+    getById,
+    toggleSelect,
+    selectAll,
+    unselectAll,
+    isSelected,
+    selectedCount,
+    selectedIdList,
     DEFAULT_AVATAR,
   }
 })

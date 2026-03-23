@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 
+// lưu toast đang hiển thị
 const toasts = ref([])
+// đếm ID cho mỗi toast
 let idCounter = 0
 
 export function useToast() {
@@ -14,16 +16,28 @@ export function useToast() {
   }
 
   function remove(id) {
-    const idx = toasts.value.findIndex(t => t.id === id)
+    const idx = toasts.value.findIndex((t) => t.id === id)
     if (idx !== -1) toasts.value.splice(idx, 1)
   }
 
-  function success(msg) { return show(msg, 'success') }
-  function error(msg) { return show(msg, 'error') }
-  function loading(msg) { return show(msg, 'loading', 0) }
+  function success(msg) {
+    return show(msg, 'success')
+  }
+
+  function error(msg) {
+    return show(msg, 'error')
+  }
+
+  function loading(msg) {
+    return show(msg, 'loading', 0)
+  }
+  
   function update(id, msg, type, duration = 3000) {
-    const t = toasts.value.find(t => t.id === id)
-    if (t) { t.message = msg; t.type = type }
+    const t = toasts.value.find((t) => t.id === id)
+    if (t) {
+      t.message = msg
+      t.type = type
+    }
     if (duration > 0) setTimeout(() => remove(id), duration)
   }
 

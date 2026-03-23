@@ -24,15 +24,22 @@
         </thead>
         <tbody>
           <tr v-if="!candidates.length">
-            <td colspan="14" style="text-align:center;padding:40px;color:#888;">Chưa có ứng viên nào</td>
+            <td colspan="14" style="text-align: center; padding: 40px; color: #888">
+              Chưa có ứng viên nào
+            </td>
           </tr>
           <tr v-for="c in candidates" :key="c.employeeId">
             <td class="checkbox">
-              <input type="checkbox" :data-id="c.employeeId" :checked="store.isSelected(c.employeeId)" @change="store.toggleSelect(c.employeeId)" />
+              <input
+                type="checkbox"
+                :data-id="c.employeeId"
+                :checked="store.isSelected(c.employeeId)"
+                @change="store.toggleSelect(c.employeeId)"
+              />
             </td>
             <td>
               <div class="avatar-cell">
-                <img class="avatar" :src="c.avatar || store.DEFAULT_AVATAR" alt="">
+                <img class="avatar" :src="c.avatar || store.DEFAULT_AVATAR" alt="" />
                 {{ c.fullName || '--' }}
               </div>
             </td>
@@ -48,10 +55,20 @@
             <td>{{ c.province || '--' }}</td>
             <td>{{ c.ward || '--' }}</td>
             <td class="col-action">
-              <button class="btn-action btn-edit" :data-id="c.employeeId" @click.stop="$emit('edit', c.employeeId)" title="Sửa">
+              <button
+                class="btn-action btn-edit"
+                :data-id="c.employeeId"
+                @click.stop="$emit('edit', c.employeeId)"
+                title="Sửa"
+              >
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
-              <button class="btn-action btn-delete" :data-id="c.employeeId" @click.stop="$emit('delete', c.employeeId)" title="Xóa">
+              <button
+                class="btn-action btn-delete"
+                :data-id="c.employeeId"
+                @click.stop="$emit('delete', c.employeeId)"
+                title="Xóa"
+              >
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
@@ -71,12 +88,13 @@ defineEmits(['edit', 'delete'])
 
 const store = useCandidateStore()
 
-const allPageChecked = computed(() =>
-  props.candidates.length > 0 && props.candidates.every(c => store.isSelected(c.employeeId))
+const allPageChecked = computed(
+  () =>
+    props.candidates.length > 0 && props.candidates.every((c) => store.isSelected(c.employeeId)),
 )
 
 function toggleAll(e) {
-  const ids = props.candidates.map(c => c.employeeId)
+  const ids = props.candidates.map((c) => c.employeeId)
   if (e.target.checked) store.selectAll(ids)
   else store.unselectAll()
 }

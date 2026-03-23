@@ -7,13 +7,21 @@
       </div>
     </div>
     <div class="sidebar__item">
-      <div class="sidebar__container" :class="{ 'sidebar--acitve': $route.path === '/news' }" @click="$router.push('/news')">
+      <div
+        class="sidebar__container"
+        :class="{ 'sidebar--acitve': $route.path === '/news' }"
+        @click="$router.push('/news')"
+      >
         <div class="sidebar__icon news-candidate"></div>
         <div class="sidebar-text">Tin tuyển dụng</div>
       </div>
     </div>
     <div class="sidebar__item">
-      <div class="sidebar__container" :class="{ 'sidebar--acitve': $route.path === '/candidates' }" @click="$router.push('/candidates')">
+      <div
+        class="sidebar__container"
+        :class="{ 'sidebar--acitve': $route.path === '/candidates' }"
+        @click="$router.push('/candidates')"
+      >
         <div class="sidebar__icon candidate"></div>
         <div class="sidebar-text">Ứng viên</div>
       </div>
