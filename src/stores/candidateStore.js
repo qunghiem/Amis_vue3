@@ -151,12 +151,12 @@ export const useCandidateStore = defineStore('candidates', () => {
 
     selectedIds.value = new Set(selectedIds.value)
   }
-
+  // hàm thêm tất cả vào danh sách đã checked
   function selectAll(ids) {
     ids.forEach((id) => selectedIds.value.add(Number(id)))
     selectedIds.value = new Set(selectedIds.value)
   }
-
+  // hàm xóa tất cả koir danh sách đã checked
   function unselectAll() {
     selectedIds.value = new Set()
   }

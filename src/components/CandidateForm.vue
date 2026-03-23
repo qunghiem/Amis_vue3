@@ -1,7 +1,9 @@
 <template>
   <div class="form" :class="{ 'display-block': visible }" id="form__add">
+    <!-- khi click bên ngoài modal, close modal  -->
     <div class="form__bg" @click="$emit('close')"></div>
 
+    <!-- nếu có CV -->
     <div class="form__wrapper" v-if="currentCV">
       <!-- CV Preview Panel -->
       <div class="form__cv-preview-panel">
@@ -17,34 +19,11 @@
             title="CV"
             @load="cvLoading = false"
           ></iframe>
-          <img
-            v-else-if="currentCV.type?.startsWith('image/')"
-            class="cv-image-preview"
-            :src="currentCV.dataUrl"
-            alt="CV"
-          />
-          <div v-else class="cv-loading">
-            <i
-              class="fa-solid fa-file-word"
-              style="font-size: 44px; color: #2970f6; margin-bottom: 6px"
-            ></i>
-            <span>Không thể xem trước file Word</span>
-            <span style="font-size: 11px; color: #d1d5db">{{ currentCV.name }}</span>
-          </div>
         </div>
       </div>
-      <!-- Form panel (right) -->
-      <div
-        class="form__container"
-        style="
-          border-radius: 0;
-          box-shadow: none;
-          position: static;
-          transform: none;
-          width: 550px;
-          min-width: 420px;
-        "
-      >
+
+      <!-- Form edit/add -->
+      <div class="form__container active">
         <FormInner
           :title="title"
           :form="form"
@@ -61,7 +40,7 @@
       </div>
     </div>
 
-    <!-- No CV: plain container -->
+    <!-- nếu không có CV -->
     <div class="form__container" v-else>
       <FormInner
         :title="title"
@@ -77,8 +56,6 @@
         @cv-reupload="triggerCVInput"
       />
     </div>
-
-    <!-- Hidden inputs handled via FormInner events -->
   </div>
 </template>
 
@@ -90,6 +67,7 @@ const props = defineProps({
   visible: Boolean,
   editingCandidate: Object,
 })
+
 const emit = defineEmits(['close', 'saved'])
 
 const title = ref('Thêm ứng viên')
@@ -98,6 +76,7 @@ const currentCV = ref(null)
 const cvLoading = ref(false)
 const errors = ref({})
 
+// reset form
 const EMPTY_FORM = () => ({
   fullName: '',
   phoneNumber: '',
@@ -120,13 +99,16 @@ const EMPTY_FORM = () => ({
 })
 const form = ref(EMPTY_FORM())
 
+// khi mở form
 watch(
   () => props.visible,
   (v) => {
     if (!v) return
     errors.value = {}
+    // nếu mở form edit
     if (props.editingCandidate) {
       title.value = 'Chỉnh sửa thông tin ứng viên'
+      // copy các data vào form
       Object.assign(form.value, props.editingCandidate)
       currentAvatar.value = props.editingCandidate.avatar || null
       if (props.editingCandidate.cv) {
@@ -135,8 +117,9 @@ watch(
       } else {
         currentCV.value = null
       }
-    } else {
+    } else { // nếu mở form thêm
       title.value = 'Thêm ứng viên'
+      // reset form
       form.value = EMPTY_FORM()
       currentAvatar.value = null
       currentCV.value = null
@@ -156,9 +139,6 @@ function onAvatarRemove() {
 function onCVChange(cvObj) {
   currentCV.value = cvObj
   cvLoading.value = true
-}
-function triggerCVInput() {
-  // forwarded from FormInner → triggers file input click
 }
 
 // Validate

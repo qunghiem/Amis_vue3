@@ -10,11 +10,8 @@
     <!-- CV Upload Zone -->
     <div
       class="form__content__file"
-      :class="{ 'has-cv': currentCV, dragover: isDragging }"
+      :class="{ 'has-cv': currentCV }"
       @click="!currentCV && cvInput?.click()"
-      @dragover.prevent="isDragging = true"
-      @dragleave="isDragging = false"
-      @drop.prevent="onDrop"
     >
       <div class="upload-prompt" v-if="!currentCV">
         <div class="form__content__file__title">Kéo thả hoặc bấm vào đây để tải CV lên</div>
@@ -297,7 +294,6 @@ const emit = defineEmits(['close', 'save', 'avatar-change', 'avatar-remove', 'cv
 
 const cvInput = ref(null)
 const avatarInput = ref(null)
-const isDragging = ref(false)
 
 const localForm = computed(() => props.form)
 
@@ -311,8 +307,14 @@ const cvIcon = computed(() => {
 function onAvatarInputChange(e) {
   const file = e.target.files[0]
   if (!file) return
-  if (!file.type.startsWith('image/')) { alert('Chỉ chấp nhận file ảnh!'); return }
-  if (file.size > 5 * 1024 * 1024) { alert('Ảnh không được vượt quá 5MB!'); return }
+  if (!file.type.startsWith('image/')) {
+    alert('Chỉ chấp nhận file ảnh!')
+    return
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Ảnh không được vượt quá 5MB!')
+    return
+  }
   const reader = new FileReader()
   reader.onload = (ev) => emit('avatar-change', ev.target.result)
   reader.readAsDataURL(file)
@@ -330,21 +332,27 @@ function formatSize(bytes) {
 
 function handleCVFile(file) {
   const ext = '.' + file.name.split('.').pop().toLowerCase()
-  if (!CV_EXT.includes(ext)) { alert('Chỉ chấp nhận file .doc, .docx, .pdf, .jpg, .jpeg, .png'); return }
-  if (file.size > CV_MAX) { alert('Dung lượng file không được vượt quá 15MB!'); return }
+  if (!CV_EXT.includes(ext)) {
+    alert('Chỉ chấp nhận file .doc, .docx, .pdf, .jpg, .jpeg, .png')
+    return
+  }
+  if (file.size > CV_MAX) {
+    alert('Dung lượng file không được vượt quá 15MB!')
+    return
+  }
   const reader = new FileReader()
   reader.onload = (ev) =>
-    emit('cv-change', { name: file.name, size: formatSize(file.size), type: file.type, dataUrl: ev.target.result })
+    emit('cv-change', {
+      name: file.name,
+      size: formatSize(file.size),
+      type: file.type,
+      dataUrl: ev.target.result,
+    })
   reader.readAsDataURL(file)
 }
 
 function onCVInputChange(e) {
   if (e.target.files[0]) handleCVFile(e.target.files[0])
   e.target.value = ''
-}
-
-function onDrop(e) {
-  isDragging.value = false
-  if (e.dataTransfer.files[0]) handleCVFile(e.dataTransfer.files[0])
 }
 </script>

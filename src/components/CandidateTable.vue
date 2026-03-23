@@ -87,13 +87,17 @@ defineEmits(['edit', 'delete'])
 
 const store = useCandidateStore()
 
+// nếu tất cả ứng viên đã được checked thì tự động checked ô check all
 const allPageChecked = computed(
   () =>
     props.candidates.length > 0 && props.candidates.every((c) => store.isSelected(c.employeeId)),
 )
 
+// khi click nút chọn tất cả
 function toggleAll(e) {
+  // lấy id những ứng viên trang hiện tại
   const ids = props.candidates.map((c) => c.employeeId)
+  // thêm ids vào danh sách đã checked
   if (e.target.checked) store.selectAll(ids)
   else store.unselectAll()
 }
