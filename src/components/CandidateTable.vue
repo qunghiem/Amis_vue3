@@ -75,6 +75,17 @@
           </tr>
         </tbody>
       </table>
+      <MsButton
+        icon="fa fa-check"
+      type="primary" size="medium">Default Btn</MsButton>
+
+      <MsButton
+        icon="fa fa-check" positionIcon="right"
+      type="warning" size="medium">Wanring Btn</MsButton>
+
+      <MsButton
+        icon="fa fa-check"
+      type="danger" size="large">Danger Btn</MsButton>
     </div>
   </div>
 </template>
@@ -82,6 +93,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useCandidateStore } from '@/stores/candidateStore'
+import MsButton from './ms-button/MsButton.vue'
 
 const props = defineProps({ candidates: Array })
 defineEmits(['edit', 'delete'])
