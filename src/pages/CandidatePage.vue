@@ -4,14 +4,13 @@
     <div class="title__header">
       <div class="title__left">Ứng viên</div>
       <div class="title__right">
-        <button class="delete item-button">
-          <div class="icon-delete"></div>
+        <MsButton type="danger" size="medium" icon="fa-solid fa-trash">
           Xóa dữ liệu ứng viên không trúng tuyển
-        </button>
-        <button class="add item-button add-candidates" @click="openAddModal">
-          <div class="icon-add"></div>
+        </MsButton>
+
+        <MsButton type="primary" size="medium" icon="fa-solid fa-plus" @click="openAddModal">
           Thêm ứng viên
-        </button>
+        </MsButton>
       </div>
     </div>
 
@@ -22,7 +21,7 @@
         :class="store.selectedCount > 0 ? 'display-flex' : 'display-none'"
       >
         <p class="selected-count">{{ store.selectedCount }} đang chọn</p>
-        <button class="unselect" @click="store.unselectAll()">Bỏ chọn</button>
+        <MsButton type="text" @click="store.unselectAll()">Bỏ chọn</MsButton>
         <OverflowMenu @action="handleMenuAction" />
       </div>
 
@@ -87,6 +86,7 @@ import { useToast } from '@/composables/useToast'
 import CandidateTable from '@/components/CandidateTable.vue'
 import CandidateForm from '@/components/CandidateForm.vue'
 import OverflowMenu from '@/components/OverflowMenu.vue'
+import MsButton from '@/components/ms-button/MsButton.vue'
 
 const store = useCandidateStore()
 const toast = useToast()
@@ -94,9 +94,7 @@ const toast = useToast()
 const formVisible = ref(false)
 const editingCandidate = ref(null)
 
-onMounted(() => {
-  store.init()
-})
+onMounted(() => store.init())
 
 function onSearch(e) {
   store.searchKeyword = e.target.value

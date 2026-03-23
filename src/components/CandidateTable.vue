@@ -55,37 +55,24 @@
             <td>{{ c.province || '--' }}</td>
             <td>{{ c.ward || '--' }}</td>
             <td class="col-action">
-              <button
-                class="btn-action btn-edit"
+              <MsButton
+                type="edit"
                 :data-id="c.employeeId"
-                @click.stop="$emit('edit', c.employeeId)"
+                icon="fa-solid fa-pen-to-square"
                 title="Sửa"
-              >
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
-              <button
-                class="btn-action btn-delete"
+                @click.stop="$emit('edit', c.employeeId)"
+              />
+              <MsButton
+                type="delete"
                 :data-id="c.employeeId"
-                @click.stop="$emit('delete', c.employeeId)"
+                icon="fa-solid fa-trash"
                 title="Xóa"
-              >
-                <i class="fa-solid fa-trash"></i>
-              </button>
+                @click.stop="$emit('delete', c.employeeId)"
+              />
             </td>
           </tr>
         </tbody>
       </table>
-      <MsButton
-        icon="fa fa-check"
-      type="primary" size="medium">Default Btn</MsButton>
-
-      <MsButton
-        icon="fa fa-check" positionIcon="right"
-      type="warning" size="medium">Wanring Btn</MsButton>
-
-      <MsButton
-        icon="fa fa-check"
-      type="danger" size="large">Danger Btn</MsButton>
     </div>
   </div>
 </template>

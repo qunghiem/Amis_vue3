@@ -33,7 +33,7 @@
             <div class="cv-info-size">{{ currentCV.size }}</div>
           </div>
         </div>
-        <button class="cv-reupload-btn" @click.stop="cvInput?.click()">Tải CV khác</button>
+        <MsButton type="reupload" @click.stop="cvInput?.click()">Tải CV khác</MsButton>
       </div>
       <input
         type="file"
@@ -277,13 +277,14 @@
   </div>
 
   <div class="form__footer">
-    <button class="form__footer__btn--cancel" @click="$emit('close')">Huỷ</button>
-    <button class="form__footer__btn--save" @click="$emit('save')">Lưu</button>
+    <MsButton type="cancel" @click="$emit('close')">Huỷ</MsButton>
+    <MsButton type="save" @click="$emit('save')">Lưu</MsButton>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
+import MsButton from './ms-button/MsButton.vue'
 
 const props = defineProps({
   title: String,
@@ -298,7 +299,6 @@ const cvInput = ref(null)
 const avatarInput = ref(null)
 const isDragging = ref(false)
 
-// Two-way binding to parent form via v-model-like pattern
 const localForm = computed(() => props.form)
 
 const cvIcon = computed(() => {
@@ -308,25 +308,17 @@ const cvIcon = computed(() => {
   return 'fa-file-word'
 })
 
-// Avatar
 function onAvatarInputChange(e) {
   const file = e.target.files[0]
   if (!file) return
-  if (!file.type.startsWith('image/')) {
-    alert('Chỉ chấp nhận file ảnh!')
-    return
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    alert('Ảnh không được vượt quá 5MB!')
-    return
-  }
+  if (!file.type.startsWith('image/')) { alert('Chỉ chấp nhận file ảnh!'); return }
+  if (file.size > 5 * 1024 * 1024) { alert('Ảnh không được vượt quá 5MB!'); return }
   const reader = new FileReader()
   reader.onload = (ev) => emit('avatar-change', ev.target.result)
   reader.readAsDataURL(file)
   e.target.value = ''
 }
 
-// CV
 const CV_EXT = ['.doc', '.docx', '.pdf', '.jpg', '.jpeg', '.png']
 const CV_MAX = 15 * 1024 * 1024
 
@@ -338,22 +330,11 @@ function formatSize(bytes) {
 
 function handleCVFile(file) {
   const ext = '.' + file.name.split('.').pop().toLowerCase()
-  if (!CV_EXT.includes(ext)) {
-    alert('Chỉ chấp nhận file .doc, .docx, .pdf, .jpg, .jpeg, .png')
-    return
-  }
-  if (file.size > CV_MAX) {
-    alert('Dung lượng file không được vượt quá 15MB!')
-    return
-  }
+  if (!CV_EXT.includes(ext)) { alert('Chỉ chấp nhận file .doc, .docx, .pdf, .jpg, .jpeg, .png'); return }
+  if (file.size > CV_MAX) { alert('Dung lượng file không được vượt quá 15MB!'); return }
   const reader = new FileReader()
   reader.onload = (ev) =>
-    emit('cv-change', {
-      name: file.name,
-      size: formatSize(file.size),
-      type: file.type,
-      dataUrl: ev.target.result,
-    })
+    emit('cv-change', { name: file.name, size: formatSize(file.size), type: file.type, dataUrl: ev.target.result })
   reader.readAsDataURL(file)
 }
 
