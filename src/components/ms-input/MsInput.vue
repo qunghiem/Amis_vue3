@@ -77,7 +77,7 @@ const emit = defineEmits(['update: modelValue'])
 // theo dõi giá trị các ô input, select
 const model = computed({
   get: () => props.modelValue,
-  set: (v) => emit('update: modelValue', v)
+  set: (v) => emit('update:modelValue', v)
 })
 </script>
 
