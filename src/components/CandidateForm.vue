@@ -6,9 +6,8 @@
     :close-on-overlay="true"
     @update:modelValue="(v) => !v && $emit('close')"
   >
-    <!-- Nội dung modal — layout ngang khi có CV -->
     <div :class="['cf-layout', { 'cf-layout--with-cv': currentCV }]">
-      <!-- CV preview nếu có CV -->
+      <!-- CV Preview -->
       <div v-if="currentCV" class="cf-cv-panel">
         <div class="cf-cv-panel__body">
           <div v-if="cvLoading" class="cv-loading">
@@ -24,9 +23,9 @@
         </div>
       </div>
 
-      <!-- Form Fields -->
+      <!-- Form -->
       <div class="cf-form">
-        <!-- CV Upload  -->
+        <!-- CV Upload -->
         <div
           class="form__content__file"
           :class="{ 'has-cv': currentCV }"
@@ -58,7 +57,7 @@
           />
         </div>
 
-        <!-- Avatar + các field -->
+        <!-- Avatar + Fields -->
         <div class="form__content__infor">
           <!-- Avatar -->
           <div class="form__content_avatar">
@@ -91,184 +90,133 @@
 
           <!-- Fields -->
           <div class="form__infor__user">
-            <div class="ms__row">
-              <label class="ms__label">Họ và tên <span class="ms__require">*</span></label>
-              <div class="ms__input">
-                <input
-                  type="text"
-                  placeholder="Nhập họ và tên"
-                  v-model="form.fullName"
-                  :class="{ 'is-invalid': errors.fullName }"
-                />
-                <div v-if="errors.fullName" class="field-error">{{ errors.fullName }}</div>
-              </div>
+            <!-- Họ tên -->
+            <MsInput
+              label="Họ và tên"
+              placeholder="Nhập họ và tên"
+              v-model="form.fullName"
+              :required="true"
+              :error="errors.fullName"
+            />
+
+            <!-- Ngày sinh + Giới tính -->
+            <div class="ms__flex">
+              <MsInput
+                label="Ngày sinh"
+                type="date"
+                v-model="form.dob"
+                :required="true"
+                :error="errors.dob"
+              />
+              <MsInput label="Giới tính" type="select" v-model="form.gender">
+                <option value="">Chọn giới tính</option>
+                <option value="male">Nam</option>
+                <option value="female">Nữ</option>
+                <option value="other">Khác</option>
+              </MsInput>
             </div>
 
-            <div class="ms__row ms__flex">
-              <div>
-                <label class="ms__label">Ngày sinh <span class="ms__require">*</span></label>
-                <div class="ms__input">
-                  <input type="date" v-model="form.dob" :class="{ 'is-invalid': errors.dob }" />
-                  <div v-if="errors.dob" class="field-error">{{ errors.dob }}</div>
-                </div>
-              </div>
-              <div>
-                <label class="ms__label">Giới tính</label>
-                <div class="ms__input">
-                  <select v-model="form.gender">
-                    <option value="">Chọn giới tính</option>
-                    <option value="male">Nam</option>
-                    <option value="female">Nữ</option>
-                    <option value="other">Khác</option>
-                  </select>
-                </div>
-              </div>
+            <!-- SĐT + Email -->
+            <div class="ms__flex">
+              <MsInput
+                label="Số điện thoại"
+                placeholder="Nhập số điện thoại"
+                v-model="form.phoneNumber"
+                :required="true"
+                :error="errors.phoneNumber"
+              />
+              <MsInput
+                label="Email"
+                type="email"
+                placeholder="Nhập email"
+                v-model="form.email"
+                :required="true"
+                :error="errors.email"
+              />
             </div>
 
-            <div class="ms__row ms__flex">
-              <div>
-                <label class="ms__label">Số điện thoại <span class="ms__require">*</span></label>
-                <div class="ms__input">
-                  <input
-                    type="text"
-                    placeholder="Nhập số điện thoại"
-                    v-model="form.phoneNumber"
-                    :class="{ 'is-invalid': errors.phoneNumber }"
-                  />
-                  <div v-if="errors.phoneNumber" class="field-error">{{ errors.phoneNumber }}</div>
-                </div>
-              </div>
-              <div>
-                <label class="ms__label">Email <span class="ms__require">*</span></label>
-                <div class="ms__input">
-                  <input
-                    type="email"
-                    placeholder="Nhập email"
-                    v-model="form.email"
-                    :class="{ 'is-invalid': errors.email }"
-                  />
-                  <div v-if="errors.email" class="field-error">{{ errors.email }}</div>
-                </div>
-              </div>
+            <!-- Quốc gia + Tỉnh/TP -->
+            <div class="ms__flex">
+              <MsInput
+                label="Quốc gia"
+                placeholder="Nhập quốc gia"
+                v-model="form.country"
+                :required="true"
+                :error="errors.country"
+              />
+              <MsInput
+                label="Tỉnh / Thành phố"
+                type="select"
+                v-model="form.province"
+                :required="true"
+                :error="errors.province"
+              >
+                <option value="Hà Nội">Hà Nội</option>
+                <option value="TP.HCM">TP.HCM</option>
+                <option value="Đà Nẵng">Đà Nẵng</option>
+                <option value="Hải Phòng">Hải Phòng</option>
+              </MsInput>
             </div>
 
-            <div class="ms__row ms__flex">
-              <div>
-                <label class="ms__label">Quốc gia <span class="ms__require">*</span></label>
-                <div class="ms__input">
-                  <input
-                    type="text"
-                    placeholder="Nhập quốc gia"
-                    v-model="form.country"
-                    :class="{ 'is-invalid': errors.country }"
-                  />
-                  <div v-if="errors.country" class="field-error">{{ errors.country }}</div>
-                </div>
-              </div>
-              <div>
-                <label class="ms__label">Tỉnh / Thành phố <span class="ms__require">*</span></label>
-                <div class="ms__input">
-                  <select v-model="form.province" :class="{ 'is-invalid': errors.province }">
-                    <option value="Hà Nội">Hà Nội</option>
-                    <option value="TP.HCM">TP.HCM</option>
-                    <option value="Đà Nẵng">Đà Nẵng</option>
-                    <option value="Hải Phòng">Hải Phòng</option>
-                  </select>
-                  <div v-if="errors.province" class="field-error">{{ errors.province }}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="ms__row ms__flex">
-              <div>
-                <label class="ms__label">Phường / Xã</label>
-                <div class="ms__input">
-                  <select v-model="form.ward">
-                    <option v-for="i in 8" :key="i" :value="String(i)">Xã {{ i }}</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="ms__label">Địa chỉ</label>
-                <div class="ms__input">
-                  <input type="text" placeholder="Nhập địa chỉ" v-model="form.address" />
-                </div>
-              </div>
+            <!-- Phường/Xã + Địa chỉ -->
+            <div class="ms__flex">
+              <MsInput label="Phường / Xã" type="select" v-model="form.ward">
+                <option v-for="i in 8" :key="i" :value="String(i)">Xã {{ i }}</option>
+              </MsInput>
+              <MsInput label="Địa chỉ" placeholder="Nhập địa chỉ" v-model="form.address" />
             </div>
 
             <!-- Học vấn -->
             <div class="form__section">
               <div class="form__section__title">HỌC VẤN</div>
-              <div class="ms__row ms__flex">
-                <div>
-                  <label class="ms__label">Trình độ đào tạo</label>
-                  <div class="ms__input">
-                    <input type="text" placeholder="Nhập trình độ" v-model="form.educationLevel" />
-                  </div>
-                </div>
-                <div>
-                  <label class="ms__label">Chuyên ngành</label>
-                  <div class="ms__input">
-                    <input type="text" placeholder="Nhập chuyên ngành" v-model="form.major" />
-                  </div>
-                </div>
+              <div class="ms__flex">
+                <MsInput
+                  label="Trình độ đào tạo"
+                  placeholder="Nhập trình độ"
+                  v-model="form.educationLevel"
+                />
+                <MsInput
+                  label="Chuyên ngành"
+                  placeholder="Nhập chuyên ngành"
+                  v-model="form.major"
+                />
               </div>
-              <div class="ms__row">
-                <label class="ms__label">Nơi đào tạo</label>
-                <div class="ms__input">
-                  <input type="text" placeholder="Nhập nơi đào tạo" v-model="form.educationPlace" />
-                </div>
-              </div>
+              <MsInput
+                label="Nơi đào tạo"
+                placeholder="Nhập nơi đào tạo"
+                v-model="form.educationPlace"
+              />
             </div>
 
             <!-- Tuyển dụng -->
-            <div class="ms__row ms__flex">
-              <div>
-                <label class="ms__label">Ngày ứng tuyển</label>
-                <div class="ms__input"><input type="date" v-model="form.applicationDate" /></div>
-              </div>
-              <div>
-                <label class="ms__label">Nguồn ứng viên</label>
-                <div class="ms__input">
-                  <select v-model="form.candidateSource">
-                    <option value="">Chọn nguồn</option>
-                    <option value="Facebook">Facebook</option>
-                    <option value="TopCV">TopCV</option>
-                    <option value="LinkedIn">LinkedIn</option>
-                  </select>
-                </div>
-              </div>
+            <div class="ms__flex">
+              <MsInput label="Ngày ứng tuyển" type="date" v-model="form.applicationDate" />
+              <MsInput label="Nguồn ứng viên" type="select" v-model="form.candidateSource">
+                <option value="">Chọn nguồn</option>
+                <option value="Facebook">Facebook</option>
+                <option value="TopCV">TopCV</option>
+                <option value="LinkedIn">LinkedIn</option>
+              </MsInput>
             </div>
 
-            <div class="ms__row ms__flex">
-              <div>
-                <label class="ms__label">Nhân sự khai thác</label>
-                <div class="ms__input">
-                  <select v-model="form.recruiter">
-                    <option value="">Chọn nhân sự</option>
-                    <option value="1">Đinh Nga QTHT</option>
-                    <option value="2">Le Linh HR</option>
-                    <option value="3">Tung Duong QTHT</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="ms__label">Nơi làm việc gần đây</label>
-                <div class="ms__input">
-                  <input
-                    type="text"
-                    placeholder="Nhập nơi làm việc"
-                    v-model="form.recentWorkplace"
-                  />
-                </div>
-              </div>
+            <div class="ms__flex">
+              <MsInput label="Nhân sự khai thác" type="select" v-model="form.recruiter">
+                <option value="">Chọn nhân sự</option>
+                <option value="1">Đinh Nga QTHT</option>
+                <option value="2">Le Linh HR</option>
+                <option value="3">Tung Duong QTHT</option>
+              </MsInput>
+              <MsInput
+                label="Nơi làm việc gần đây"
+                placeholder="Nhập nơi làm việc"
+                v-model="form.recentWorkplace"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Footer slot -->
     <template #footer>
       <MsButton type="cancel" @click="$emit('close')">Huỷ</MsButton>
       <MsButton type="save" @click="handleSave">Lưu</MsButton>
@@ -280,6 +228,7 @@
 import { ref, watch, computed } from 'vue'
 import MsModal from './ms-modal/MsModal.vue'
 import MsButton from './ms-button/MsButton.vue'
+import MsInput from './ms-input/MsInput.vue'
 
 const props = defineProps({
   visible: Boolean,
@@ -287,12 +236,9 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'saved'])
 
-// mở - đóng modal
 const localVisible = computed(() => props.visible)
-
 const isEditing = computed(() => !!props.editingCandidate)
 
-// State
 const currentAvatar = ref(null)
 const currentCV = ref(null)
 const cvLoading = ref(false)
@@ -307,7 +253,6 @@ const EMPTY_FORM = () => ({
   country: '',
   dob: '',
   gender: '',
-  area: '',
   province: 'Hà Nội',
   ward: '1',
   address: '',
@@ -318,11 +263,10 @@ const EMPTY_FORM = () => ({
   candidateSource: '',
   recentWorkplace: '',
   recruiter: '',
-  collaborator: '',
 })
+
 const form = ref(EMPTY_FORM())
 
-// Reset khi mở
 watch(
   () => props.visible,
   (v) => {
@@ -345,19 +289,15 @@ watch(
   },
 )
 
-// Avatar
 function onAvatarChange(e) {
   const file = e.target.files[0]
   if (!file || !file.type.startsWith('image/')) return
   const reader = new FileReader()
-  reader.onload = (ev) => {
-    currentAvatar.value = ev.target.result
-  }
+  reader.onload = (ev) => (currentAvatar.value = ev.target.result)
   reader.readAsDataURL(file)
   e.target.value = ''
 }
 
-// CV
 const CV_EXT = ['.doc', '.docx', '.pdf', '.jpg', '.jpeg', '.png']
 const CV_MAX = 15 * 1024 * 1024
 
@@ -370,14 +310,8 @@ function onCVInputChange(e) {
   const file = e.target.files[0]
   if (!file) return
   const ext = '.' + file.name.split('.').pop().toLowerCase()
-  if (!CV_EXT.includes(ext)) {
-    alert('File không hợp lệ')
-    return
-  }
-  if (file.size > CV_MAX) {
-    alert('File vượt quá 15MB')
-    return
-  }
+  if (!CV_EXT.includes(ext)) return alert('File không hợp lệ')
+  if (file.size > CV_MAX) return alert('File vượt quá 15MB')
   const reader = new FileReader()
   reader.onload = (ev) => {
     currentCV.value = {
@@ -392,7 +326,6 @@ function onCVInputChange(e) {
   e.target.value = ''
 }
 
-// Validate
 function validate() {
   const e = {}
   if (!form.value.fullName) e.fullName = 'Vui lòng nhập họ và tên'
@@ -420,7 +353,6 @@ function handleSave() {
 </script>
 
 <style scoped>
-/* Layout ngang khi có CV */
 .cf-layout {
   display: flex;
 }
@@ -458,8 +390,17 @@ function handleSave() {
   max-width: 550px;
 }
 
-/* Khi không có CV thì form chiếm full */
 .cf-layout:not(.cf-layout--with-cv) .cf-form {
   max-width: 100%;
+}
+
+/* Flex row cho các cặp field */
+.ms__flex {
+  display: flex;
+  gap: 16px;
+  margin-top: 5px;
+}
+.ms__flex > * {
+  flex: 1;
 }
 </style>
