@@ -4,11 +4,11 @@
     <div class="title__header">
       <div class="title__left">Ứng viên</div>
       <div class="title__right">
-        <MsButton type="danger" size="medium" icon="fa-solid fa-trash">
+        <MsButton type="danger" size="large" icon="fa-solid fa-trash">
           Xóa dữ liệu ứng viên không trúng tuyển
         </MsButton>
 
-        <MsButton type="primary" size="medium" icon="fa-solid fa-plus" @click="openAddModal">
+        <MsButton type="primary" size="large" icon="fa-solid fa-plus" @click="openAddModal">
           Thêm ứng viên
         </MsButton>
       </div>

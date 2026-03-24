@@ -160,7 +160,7 @@ export const useCandidateStore = defineStore('candidates', () => {
   function unselectAll() {
     selectedIds.value = new Set()
   }
-
+  // KIỂM TRA XEM ID ĐÓ ĐÃ TRONG DANH SÁCH ĐÃ CHECKED CHƯA
   function isSelected(id) {
     return selectedIds.value.has(Number(id))
   }

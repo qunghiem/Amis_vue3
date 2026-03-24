@@ -1,85 +1,46 @@
 <template>
-  <div class="content_body">
-    <div class="table-wrapper">
-      <table class="candidate-table">
-        <thead>
-          <tr>
-            <th class="checkbox">
-              <input type="checkbox" :checked="allPageChecked" @change="toggleAll" />
-            </th>
-            <th class="td_fullName">Họ và tên</th>
-            <th class="td_phone">Số điện thoại</th>
-            <th class="td_candidate-source">Nguồn ứng viên</th>
-            <th class="td_email">Email</th>
-            <th class="td_recruitment-campaign">Chiến dịch tuyển dụng</th>
-            <th class="td_position">Vị trí tuyển dụng</th>
-            <th class="td_job-posting">Tin tuyển dụng</th>
-            <th class="td_recruitment-stage">Vòng tuyển dụng</th>
-            <th class="td_evaluation">Đánh giá</th>
-            <th>Quốc gia</th>
-            <th>Tỉnh / Thành phố</th>
-            <th>Phường / Xã</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="!candidates.length">
-            <td colspan="14" style="text-align: center; padding: 40px; color: #888">
-              Chưa có ứng viên nào
-            </td>
-          </tr>
-          <tr v-for="c in candidates" :key="c.employeeId">
-            <td class="checkbox">
-              <input
-                type="checkbox"
-                :data-id="c.employeeId"
-                :checked="store.isSelected(c.employeeId)"
-                @change="store.toggleSelect(c.employeeId)"
-              />
-            </td>
-            <td>
-              <div class="avatar-cell">
-                <img class="avatar" :src="c.avatar || store.DEFAULT_AVATAR" alt="" />
-                {{ c.fullName || '--' }}
-              </div>
-            </td>
-            <td>{{ c.phoneNumber || '--' }}</td>
-            <td>{{ c.candidateSource || '--' }}</td>
-            <td :title="c.email">{{ c.email || '--' }}</td>
-            <td>{{ c.recruitmentCampaign || '--' }}</td>
-            <td>{{ c.position || '--' }}</td>
-            <td>{{ c.jobPosting || '--' }}</td>
-            <td>{{ c.recruitmentStage || '--' }}</td>
-            <td>{{ c.evaluation || '--' }}</td>
-            <td>{{ c.country || '--' }}</td>
-            <td>{{ c.province || '--' }}</td>
-            <td>{{ c.ward || '--' }}</td>
-            <td class="col-action">
-              <MsButton
-                type="edit"
-                :data-id="c.employeeId"
-                icon="fa-solid fa-pen-to-square"
-                title="Sửa"
-                @click.stop="$emit('edit', c.employeeId)"
-              />
-              <MsButton
-                type="delete"
-                :data-id="c.employeeId"
-                icon="fa-solid fa-trash"
-                title="Xóa"
-                @click.stop="$emit('delete', c.employeeId)"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <MsTable
+    :columns="COLUMNS"
+    :rows="candidates"
+    row-key="employeeId"
+    :selectable="true"
+    :all-checked="allPageChecked"
+    :is-selected="store.isSelected"
+    empty-text="Chưa có ứng viên nào"
+    @toggle-all="toggleAll"
+    @toggle-row="(id) => store.toggleSelect(id)"
+    @row-click="(row) => $emit('edit', row.employeeId)"
+  >
+    <!-- Avatar + Tên -->
+    <template #cell-fullName="{ row }">
+      <div class="avatar-cell">
+        <img class="avatar" :src="row.avatar || store.DEFAULT_AVATAR" alt="" />
+        {{ row.fullName || '--' }}
+      </div>
+    </template>
+
+    <!-- Action buttons -->
+    <template #actions="{ row }">
+      <MsButton
+        type="edit"
+        icon="fa-solid fa-pen-to-square"
+        title="Sửa"
+        @click.stop="$emit('edit', row.employeeId)"
+      />
+      <MsButton
+        type="delete"
+        icon="fa-solid fa-trash"
+        title="Xóa"
+        @click.stop="$emit('delete', row.employeeId)"
+      />
+    </template>
+  </MsTable>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useCandidateStore } from '@/stores/candidateStore'
+import MsTable from './ms-table/MsTable.vue'
 import MsButton from './ms-button/MsButton.vue'
 
 const props = defineProps({ candidates: Array })
@@ -87,17 +48,31 @@ defineEmits(['edit', 'delete'])
 
 const store = useCandidateStore()
 
-// nếu tất cả ứng viên đã được checked thì tự động checked ô check all
+const COLUMNS = [
+  { key: 'fullName',            label: 'Họ và tên',              width: '264px' },
+  { key: 'phoneNumber',         label: 'Số điện thoại',          width: '127px' },
+  { key: 'candidateSource',     label: 'Nguồn ứng viên',         width: '151px' },
+  { key: 'email',               label: 'Email',                  width: '236px', showTitle: true },
+  { key: 'recruitmentCampaign', label: 'Chiến dịch tuyển dụng',  width: '188px' },
+  { key: 'position',            label: 'Vị trí tuyển dụng',      width: '216px' },
+  { key: 'jobPosting',          label: 'Tin tuyển dụng',         width: '244px' },
+  { key: 'recruitmentStage',    label: 'Vòng tuyển dụng',        width: '160px' },
+  { key: 'evaluation',          label: 'Đánh giá',               width: '120px' },
+  { key: 'country',             label: 'Quốc gia',               width: '120px' },
+  { key: 'province',            label: 'Tỉnh / Thành phố',       width: '150px' },
+  { key: 'ward',                label: 'Phường / Xã',            width: '140px' },
+]
+
+// KIỂM TRA TẤT CẢ ĐÃ CHECKED CHƯA: TRUE, FALSE
 const allPageChecked = computed(
   () =>
-    props.candidates.length > 0 && props.candidates.every((c) => store.isSelected(c.employeeId)),
+    props.candidates.length > 0 &&
+    props.candidates.every((c) => store.isSelected(c.employeeId)),
 )
 
-// khi click nút chọn tất cả
+// CLICK CHỌN TẤT CẢ
 function toggleAll(e) {
-  // lấy id những ứng viên trang hiện tại
   const ids = props.candidates.map((c) => c.employeeId)
-  // thêm ids vào danh sách đã checked
   if (e.target.checked) store.selectAll(ids)
   else store.unselectAll()
 }

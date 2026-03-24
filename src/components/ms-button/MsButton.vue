@@ -1,9 +1,5 @@
 <template>
-  <button
-    :class="btnClass"
-    :disabled="disabled || loading"
-    v-bind="$attrs"
-  >
+  <button :class="btnClass" :disabled="disabled || loading" v-bind="$attrs">
     <!-- Spinner khi loading -->
     <span v-if="loading" class="ms-btn__spinner"></span>
 
@@ -78,7 +74,10 @@ const btnClass = computed(() => [
   white-space: nowrap;
   cursor: pointer;
   border-radius: 5px;
-  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s,
+    border-color 0.15s;
   position: relative;
   user-select: none;
   vertical-align: middle;
@@ -103,7 +102,7 @@ const btnClass = computed(() => [
 
 .ms-btn--large {
   font-size: 15px;
-  padding: 8px 20px;
+  padding: 11px 20px;
 }
 
 /* TYPES  */
@@ -254,7 +253,9 @@ const btnClass = computed(() => [
 }
 
 @keyframes ms-btn-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /*  ICONS */
@@ -263,8 +264,12 @@ const btnClass = computed(() => [
   align-items: center;
   flex-shrink: 0;
 }
-.ms-btn__icon--left  { margin-right: 5px; }
-.ms-btn__icon--right { margin-left: 5px; }
+/* .ms-btn__icon--left {
+  margin-right: 5px;
+}
+.ms-btn__icon--right {
+  margin-left: 5px;
+} */
 
 /* CONTENT*/
 .ms-btn__content {
