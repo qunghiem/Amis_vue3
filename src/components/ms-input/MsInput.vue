@@ -15,6 +15,7 @@
         v-model="model"
         :class="['ms-input__field', { 'ms-input--invalid': error}]"
         v-bind="$attrs"
+        @blur="emit('blur', $event)"
       >
           <slot></slot>
        </select>
@@ -28,6 +29,7 @@
           :class="['ms-input__field', { 'ms-input--invalid': error}]"
           v-bind="$attrs"
           :type="type"
+          @blur="emit('blur', $event)"
         />
      </div>
 
@@ -76,7 +78,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update: modelValue'])
+const emit = defineEmits(['update:modelValue', 'blur'])
 
 // theo dõi giá trị các ô input, select
 const model = computed({

@@ -15,7 +15,7 @@
     </div>
 
     <div class="content">
-      <!-- Selection toolbar -->
+      <!-- Thanh bar ngang nếu có Checked -->
       <div
         class="selected_content"
         :class="store.selectedCount > 0 ? 'display-flex' : 'display-none'"
@@ -26,6 +26,7 @@
       </div>
 
       <!-- Search & filter bar -->
+       <!-- // chỉ hiện khi k chọn checked ai  -->
       <div class="content__nav" :class="{ 'display-none': store.selectedCount > 0 }">
         <div class="content__search">
           <div class="icon-search-ami"></div>
@@ -76,7 +77,7 @@
 
   <!-- Add / Edit Modal -->
   <CandidateForm
-    :visible="formVisible" 
+    :visible="formVisible"
     :editingCandidate="editingCandidate"
     @close="closeModal"
     @saved="handleSaved"
@@ -113,12 +114,14 @@ function onSearch(e) {
 // Mở modal thêm mới (truyền null để form biết là đang ở chế độ thêm mới, không phải sửa)
 function openAddModal() {
   editingCandidate.value = null
+  // hiện form thêm mới
   formVisible.value = true
 }
 
 // Mở modal sửa thông tin (truyền dữ liệu ứng viên cần sửa vào form để form bind hiển thị thông tin đó lên các ô input)
 function openEditModal(id) {
   editingCandidate.value = store.getById(id)
+  // hiện form sửa thông tin
   formVisible.value = true
 }
 
@@ -149,14 +152,15 @@ function handleDelete(id) {
   toast.success('✅ Xóa ứng viên thành công!')
 }
 
-// Hàm xử lý khi chọn các action trong menu (hiển thị khi đã chọn 1 hoặc nhiều ứng viên)
+// Hàm xử lý khi chọn các action Xóa đã chọn trong menu dropdown
 function handleMenuAction(id) {
+
   if (id === 'delete-selected') {
-    const ids = store.selectedIdList
+    const ids = store.selectedIdList // Lấy danh sách id của các ứng viên đang được chọn
     if (!ids.length) return
     if (!confirm(`Bạn có chắc muốn xóa ${ids.length} ứng viên đã chọn?`)) return
     store.deleteByIds(ids)
-    toast.success(`✅ Đã xóa ${ids.length} ứng viên!`)
+    toast.success(`Đã xóa ${ids.length} ứng viên!`)
   } else {
     console.log('Menu action:', id, '| Selected:', store.selectedIdList)
   }

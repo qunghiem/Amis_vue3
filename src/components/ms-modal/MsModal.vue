@@ -52,11 +52,11 @@ const props = defineProps({
     default: '' },
 })
 
-const emit = defineEmits(['update: modelValue'])
+const emit = defineEmits(['update:modelValue'])
 
 // click đóng modal
 function onOverlayClick() {
-  if (props.closeOnOverlay) emit('update: modelValue', false)
+  if (props.closeOnOverlay) emit('update:modelValue', false)
 }
 </script>
 

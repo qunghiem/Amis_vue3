@@ -144,9 +144,11 @@ export const useCandidateStore = defineStore('candidates', () => {
   // xóa nhiều ứng viên theo ID
   function deleteByIds(ids) {
     const numSet = new Set(ids.map(Number))
+    // lọc lại danh sách ứng viên, chỉ giữ lại những ứng viên có employeeId không nằm trong Set các id cần xóa
     candidates.value = candidates.value.filter((c) => {
       return !numSet.has(c.employeeId)
     })
+    // xóa các id đã xóa khỏi Set lưu id được tích chọn
     ids.forEach((id) => {
       selectedIds.value.delete(Number(id))
     })
@@ -179,8 +181,9 @@ export const useCandidateStore = defineStore('candidates', () => {
   function isSelected(id) {
     return selectedIds.value.has(Number(id))
   }
-
+// số lượng ứng viên đang được chọn (đã checked)
   const selectedCount = computed(() => selectedIds.value.size)
+  // danh sách id của các ứng viên đang được chọn (đã checked)
   const selectedIdList = computed(() => Array.from(selectedIds.value))
 
   return {

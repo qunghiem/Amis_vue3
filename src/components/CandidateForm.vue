@@ -98,6 +98,7 @@
               v-model="form.fullName"
               :required="true"
               :error="errors.fullName"
+              @blur="validateField('fullName')"
             />
 
             <!-- Ngày sinh + Giới tính -->
@@ -109,6 +110,7 @@
                 v-model="form.dob"
                 :required="true"
                 :error="errors.dob"
+                @blur="validateField('dob')"
               />
               <MsInput label="Giới tính" type="select" v-model="form.gender">
                 <option value="">Chọn giới tính</option>
@@ -127,6 +129,7 @@
                 v-model="form.phoneNumber"
                 :required="true"
                 :error="errors.phoneNumber"
+                @blur="validateField('phoneNumber')"
               />
               <MsInput
                 ref="emailRef"
@@ -136,6 +139,7 @@
                 v-model="form.email"
                 :required="true"
                 :error="errors.email"
+                @blur="validateField('email')"
               />
             </div>
 
@@ -148,6 +152,7 @@
                 v-model="form.country"
                 :required="true"
                 :error="errors.country"
+                @blur="validateField('country')"
               />
               <MsInput
                 ref="provinceRef"
@@ -156,6 +161,7 @@
                 v-model="form.province"
                 :required="true"
                 :error="errors.province"
+                @blur="validateField('province')"
               >
                 <option value="Hà Nội">Hà Nội</option>
                 <option value="TP.HCM">TP.HCM</option>
@@ -299,9 +305,12 @@ watch(
   () => props.visible,
   (v) => {
     if (!v) return
+    // khi mở modal thì reset lỗi validate cũ
     errors.value = {}
+
     // nếu đang là edit => điền dữ liệu vào form, nếu đang là add => reset form về rỗng
     if (props.editingCandidate) {
+      // nếu đang edit thì điền/copy(assign) dữ liệu ứng viên vào form
       Object.assign(form.value, props.editingCandidate)
       currentAvatar.value = props.editingCandidate.avatar || null
       if (props.editingCandidate.cv) {
@@ -366,22 +375,10 @@ function onCVInputChange(e) {
   e.target.value = ''
 }
 
-// Hàm validate form, trả về true nếu hợp lệ, false nếu có lỗi, đồng thời lưu lỗi vào errors để hiển thị
 function validate() {
-  const e = {}
-  if (!form.value.fullName) e.fullName = 'Vui lòng nhập họ và tên'
-  if (!form.value.phoneNumber) e.phoneNumber = 'Vui lòng nhập số điện thoại'
-  else if (!/^0[0-9]{9}$/.test(form.value.phoneNumber)) e.phoneNumber = 'Số điện thoại không hợp lệ'
-  if (!form.value.email) e.email = 'Vui lòng nhập email'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) e.email = 'Email không hợp lệ'
-  if (!form.value.country) e.country = 'Vui lòng nhập quốc gia'
-  if (!form.value.province) e.province = 'Vui lòng chọn tỉnh / thành phố'
-  if (!form.value.dob) e.dob = 'Vui lòng nhập ngày sinh'
-  else if (new Date(form.value.dob) > new Date()) e.dob = 'Ngày sinh không hợp lệ'
-  // lưu lỗi vào errors để hiển thị
-  errors.value = e
-  // nếu có lỗi thì trả về false để không lưu, ngược lại trả về true để cho phép lưu
-  return Object.keys(e).length === 0
+  ['fullName', 'dob', 'phoneNumber', 'email', 'country', 'province'].forEach(validateField)
+  // kiểm tra nếu có 1 lỗi nào thì trả về false, ngược lại trả về true
+  return Object.values(errors.value).every(e => !e)
 }
 
 // Hàm xử lý khi click lưu thông tin ứng viên, validate form rồi mới emit sự kiện saved lên cho cha xử lý (thêm mới hoặc cập nhật)
@@ -393,6 +390,7 @@ function handleSaved() {
 
     // tìm key đầu tiên có lỗi rồi focus vào ô input tương ứng
     const firstKey = ORDER.find((k) => errors.value[k])
+
     // nếu tìm thấy key có lỗi thì focus vào ô input tương ứng
     if (firstKey) nextTick(() => fieldRefMap[firstKey]?.value?.focus())
     return
@@ -406,6 +404,36 @@ function handleSaved() {
     // nếu đang edit thì có employeeId, ngược lại là đang thêm mới nên không có employeeId, form sẽ tự hiểu là thêm mới
     employeeId: props.editingCandidate?.employeeId,
   })
+}
+
+// Hàm validate cho từng field, có thể gọi khi blur khỏi ô input để validate ngay khi người dùng nhập xong, tránh việc phải đợi đến khi click lưu mới biết lỗi
+function validateField(field) {
+  switch (field) {
+    case 'fullName':
+      errors.value.fullName = form.value.fullName?.trim() ? '' : 'Vui lòng nhập họ và tên'
+      break
+    case 'dob':
+      if (!form.value.dob) errors.value.dob = 'Vui lòng nhập ngày sinh'
+      else if (new Date(form.value.dob) > new Date()) errors.value.dob = 'Ngày sinh không hợp lệ'
+      else errors.value.dob = ''
+      break
+    case 'phoneNumber':
+      if (!form.value.phoneNumber) errors.value.phoneNumber = 'Vui lòng nhập số điện thoại'
+      else if (!/^0[0-9]{9}$/.test(form.value.phoneNumber)) errors.value.phoneNumber = 'Số điện thoại không hợp lệ'
+      else errors.value.phoneNumber = ''
+      break
+    case 'email':
+      if (!form.value.email) errors.value.email = 'Vui lòng nhập email'
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) errors.value.email = 'Email không hợp lệ'
+      else errors.value.email = ''
+      break
+    case 'country':
+      errors.value.country = form.value.country?.trim() ? '' : 'Vui lòng nhập quốc gia'
+      break
+    case 'province':
+      errors.value.province = form.value.province ? '' : 'Vui lòng chọn tỉnh / thành phố'
+      break
+  }
 }
 </script>
 

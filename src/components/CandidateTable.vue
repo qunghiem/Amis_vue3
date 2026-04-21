@@ -64,6 +64,7 @@ const COLUMNS = [
 ]
 
 // KIỂM TRA TẤT CẢ ĐÃ CHECKED CHƯA: TRUE, FALSE
+// Nếu có ứng viên nào chưa được chọn thì allPageChecked sẽ là false, ngược lại nếu tất cả đều được chọn thì allPageChecked sẽ là true
 const allPageChecked = computed(
   () =>
     props.candidates.length > 0 &&
@@ -73,6 +74,7 @@ const allPageChecked = computed(
 // CLICK CHỌN TẤT CẢ
 function toggleAll(e) {
   const ids = props.candidates.map((c) => c.employeeId)
+  // Nếu đang checked thì uncheck tất cả, ngược lại thì check tất cả
   if (e.target.checked) store.selectAll(ids)
   else store.unselectAll()
 }

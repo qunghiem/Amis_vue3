@@ -106,6 +106,7 @@ const props = defineProps({
 
 defineEmits(['toggle-all', 'toggle-row', 'row-click'])
 
+
 const totalCols = computed(() => {
   let count = props.columns.length
   if (props.selectable) count++
