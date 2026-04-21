@@ -92,6 +92,7 @@
           <div class="form__infor__user">
             <!-- Họ tên -->
             <MsInput
+              ref="fullNameRef"
               label="Họ và tên"
               placeholder="Nhập họ và tên"
               v-model="form.fullName"
@@ -102,6 +103,7 @@
             <!-- Ngày sinh + Giới tính -->
             <div class="ms__flex">
               <MsInput
+                ref="dobRef"
                 label="Ngày sinh"
                 type="date"
                 v-model="form.dob"
@@ -119,6 +121,7 @@
             <!-- SĐT + Email -->
             <div class="ms__flex">
               <MsInput
+                ref="phoneRef"
                 label="Số điện thoại"
                 placeholder="Nhập số điện thoại"
                 v-model="form.phoneNumber"
@@ -126,6 +129,7 @@
                 :error="errors.phoneNumber"
               />
               <MsInput
+                ref="emailRef"
                 label="Email"
                 type="email"
                 placeholder="Nhập email"
@@ -138,6 +142,7 @@
             <!-- Quốc gia + Tỉnh/TP -->
             <div class="ms__flex">
               <MsInput
+                ref="countryRef"
                 label="Quốc gia"
                 placeholder="Nhập quốc gia"
                 v-model="form.country"
@@ -145,6 +150,7 @@
                 :error="errors.country"
               />
               <MsInput
+                ref="provinceRef"
                 label="Tỉnh / Thành phố"
                 type="select"
                 v-model="form.province"
@@ -225,7 +231,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import MsModal from './ms-modal/MsModal.vue'
 import MsButton from './ms-button/MsButton.vue'
 import MsInput from './ms-input/MsInput.vue'
@@ -245,6 +251,21 @@ const cvLoading = ref(false)
 const errors = ref({})
 const cvInput = ref(null)
 const avatarInput = ref(null)
+const fullNameRef = ref(null)
+const dobRef      = ref(null)
+const phoneRef    = ref(null)
+const emailRef    = ref(null)
+const countryRef  = ref(null)
+const provinceRef = ref(null)
+
+const fieldRefMap = {
+  fullName:    fullNameRef,
+  dob:         dobRef,
+  phoneNumber: phoneRef,
+  email:       emailRef,
+  country:     countryRef,
+  province:    provinceRef,
+}
 
 const EMPTY_FORM = () => ({
   fullName: '',
@@ -288,6 +309,13 @@ watch(
     }
   },
 )
+
+watch(() => form.value.fullName,    (v) => { if (v?.trim()) errors.value.fullName = '' })
+watch(() => form.value.country,     (v) => { if (v?.trim()) errors.value.country  = '' })
+watch(() => form.value.province,    (v) => { if (v)         errors.value.province = '' })
+watch(() => form.value.dob,         (v) => { if (v && new Date(v) <= new Date()) errors.value.dob = '' })
+watch(() => form.value.phoneNumber, (v) => { if (/^0[0-9]{9}$/.test(v)) errors.value.phoneNumber = '' })
+watch(() => form.value.email,       (v) => { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) errors.value.email = '' })
 
 function onAvatarChange(e) {
   const file = e.target.files[0]
@@ -342,7 +370,14 @@ function validate() {
 }
 
 function handleSave() {
-  if (!validate()) return
+  if (!validate()) {
+    const ORDER = ['fullName', 'dob', 'phoneNumber', 'email', 'country', 'province']
+    const firstKey = ORDER.find((k) => errors.value[k])
+    if (firstKey) nextTick(() => fieldRefMap[firstKey]?.value?.focus())
+    return
+  }
+
+
   emit('saved', {
     ...form.value,
     avatar: currentAvatar.value,

@@ -10,6 +10,7 @@
      <div class="ms-input__control">
       <!-- Select -->
        <select
+        ref="fieldRef"
         v-if="type === 'select'"
         v-model="model"
         :class="['ms-input__field', { 'ms-input--invalid': error}]"
@@ -20,6 +21,7 @@
 
        <!-- Input: text, gmail, phone, date,... -->
         <input
+          ref="fieldRef"
           v-else
           v-model="model"
           :placeholder="placeholder"
@@ -37,12 +39,14 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref  } from 'vue';
 
 // Tắt tự động gán attr vào root element
 defineOptions({
     inheritAttrs: false
 })
+
+
 
 const props = defineProps({
   modelValue: {
@@ -79,6 +83,10 @@ const model = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
 })
+
+const fieldRef = ref(null)
+defineExpose({ focus: () => fieldRef.value?.focus() })
+
 </script>
 
 <style scoped>
