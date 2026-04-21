@@ -108,7 +108,7 @@ export const useCandidateStore = defineStore('candidates', () => {
 
     resetPage()
   }
-
+// cập nhật thông tin ứng viên
   function updateCandidate(data) {
     const idx = candidates.value.findIndex((c) => c.employeeId === data.employeeId)
     if (idx === -1) return false

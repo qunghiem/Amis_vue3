@@ -111,6 +111,7 @@ const btnClass = computed(() => [
   background-color: #2680eb;
   color: #ffffff;
   border: none;
+  gap: 8px;
 }
 .ms-btn--primary:hover:not(:disabled) {
   background-color: #4097ff;
@@ -120,6 +121,7 @@ const btnClass = computed(() => [
   background-color: #ffffff;
   color: inherit;
   border: 1px solid #ffffff;
+  gap: 8px;
 }
 .ms-btn--danger:hover:not(:disabled) {
   color: #4097ff;
