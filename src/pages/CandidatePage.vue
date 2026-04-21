@@ -49,7 +49,9 @@
 
       <!-- Footer pagination -->
       <div class="foot-table">
+        <!-- // Tổng số bản ghi  -->
         <div class="total-record">Tổng bản ghi: {{ store.pageInfo.total }}</div>
+        <!-- // Số bản ghi trên 1 trang -->
         <div class="total-page">
           Số bản ghi/trang
           <select
@@ -58,9 +60,11 @@
           >
             <option v-for="n in [5, 10, 15, 25, 50, 100]" :key="n" :value="n">{{ n }}</option>
           </select>
+          <!-- Số trang -->
           <div class="desc index-record">
             {{ store.pageInfo.start }} - {{ store.pageInfo.end }} bản ghi
           </div>
+          <!-- // Nút chuyển trang -->
           <div class="prev-next">
             <button class="prev" :disabled="store.isFirstPage" @click="store.prevPage()"></button>
             <button class="next" :disabled="store.isLastPage" @click="store.nextPage()"></button>
@@ -72,7 +76,7 @@
 
   <!-- Add / Edit Modal -->
   <CandidateForm
-    :visible="formVisible"
+    :visible="formVisible" 
     :editingCandidate="editingCandidate"
     @close="closeModal"
     @saved="handleSaved"
@@ -91,32 +95,42 @@ import MsButton from '@/components/ms-button/MsButton.vue'
 const store = useCandidateStore()
 const toast = useToast()
 
+// ẩn - hiện form thêm mới / sửa thông tin ứng viên
 const formVisible = ref(false)
+
+// Dữ liệu ứng viên đang được chỉnh sửa
 const editingCandidate = ref(null)
 
+// Khởi tạo dữ liệu ứng viên từ Storage khi component được mounted
 onMounted(() => store.init())
 
+// Hàm xử lý khi nhập từ ô tìm kiếm
 function onSearch(e) {
   store.searchKeyword = e.target.value
   store.resetPage()
 }
 
+// Mở modal thêm mới (truyền null để form biết là đang ở chế độ thêm mới, không phải sửa)
 function openAddModal() {
   editingCandidate.value = null
   formVisible.value = true
 }
 
+// Mở modal sửa thông tin (truyền dữ liệu ứng viên cần sửa vào form để form bind hiển thị thông tin đó lên các ô input)
 function openEditModal(id) {
   editingCandidate.value = store.getById(id)
   formVisible.value = true
 }
 
+// Đóng modal và reset dữ liệu đang chỉnh sửa
 function closeModal() {
   formVisible.value = false
   editingCandidate.value = null
 }
 
+// Hàm xử lý khi form thêm mới / sửa thông tin ứng viên được lưu lại
 function handleSaved(data) {
+  // nếu data có employeeId nghĩa là đang sửa thông tin ứng viên, ngược lại là đang thêm mới
   if (data.employeeId) {
     store.updateCandidate(data)
     toast.success('✅ Cập nhật thông tin thành công!')
@@ -124,15 +138,18 @@ function handleSaved(data) {
     store.addCandidate(data)
     toast.success('✅ Thêm ứng viên thành công!')
   }
+  // đóng modal sau khi lưu thành công
   closeModal()
 }
 
+// Hàm xử lý khi xóa ứng viên
 function handleDelete(id) {
   if (!confirm('Bạn có chắc muốn xóa ứng viên này?')) return
   store.deleteById(id)
   toast.success('✅ Xóa ứng viên thành công!')
 }
 
+// Hàm xử lý khi chọn các action trong menu (hiển thị khi đã chọn 1 hoặc nhiều ứng viên)
 function handleMenuAction(id) {
   if (id === 'delete-selected') {
     const ids = store.selectedIdList

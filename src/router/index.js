@@ -7,8 +7,6 @@ const routes = [
   { path: '/', redirect: '/candidates' },
   { path: '/candidates', component: CandidatePage },
   { path: '/news', component: NewsPage },
-  { path: '/inventoryitemlist', component: InventoryItemList },
-
 ]
 
 const router = createRouter({

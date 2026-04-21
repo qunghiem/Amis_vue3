@@ -225,7 +225,7 @@
 
     <template #footer>
       <MsButton type="cancel" @click="$emit('close')">Huỷ</MsButton>
-      <MsButton type="save" @click="handleSave">Lưu</MsButton>
+      <MsButton type="save" @click="handleSaved">Lưu</MsButton>
     </template>
   </MsModal>
 </template>
@@ -240,14 +240,18 @@ const props = defineProps({
   visible: Boolean,
   editingCandidate: Object,
 })
+
+
 const emit = defineEmits(['close', 'saved'])
 
 const localVisible = computed(() => props.visible)
 const isEditing = computed(() => !!props.editingCandidate)
 
+// Dữ liệu form, avatar, cv, lỗi validate
 const currentAvatar = ref(null)
 const currentCV = ref(null)
 const cvLoading = ref(false)
+// object để lưu lỗi validate cho từng field, ví dụ errors.fullName sẽ chứa lỗi của field fullName, nếu không có lỗi thì sẽ là empty string
 const errors = ref({})
 const cvInput = ref(null)
 const avatarInput = ref(null)
@@ -258,6 +262,7 @@ const emailRef    = ref(null)
 const countryRef  = ref(null)
 const provinceRef = ref(null)
 
+// ánh xạ giữa field name và ref để dễ dàng focus khi validate lỗi
 const fieldRefMap = {
   fullName:    fullNameRef,
   dob:         dobRef,
@@ -267,6 +272,7 @@ const fieldRefMap = {
   province:    provinceRef,
 }
 
+// Hàm khởi tạo form, trả về object rỗng hoặc mặc định cho các trường hợp thêm mới
 const EMPTY_FORM = () => ({
   fullName: '',
   phoneNumber: '',
@@ -285,14 +291,16 @@ const EMPTY_FORM = () => ({
   recentWorkplace: '',
   recruiter: '',
 })
-
+// Dữ liệu form, bind với các ô input, select
 const form = ref(EMPTY_FORM())
 
+// Watch để khi mở modal thì nếu đang edit thì điền dữ liệu ứng viên vào form, nếu đang thêm mới thì reset form về rỗng
 watch(
   () => props.visible,
   (v) => {
     if (!v) return
     errors.value = {}
+    // nếu đang là edit => điền dữ liệu vào form, nếu đang là add => reset form về rỗng
     if (props.editingCandidate) {
       Object.assign(form.value, props.editingCandidate)
       currentAvatar.value = props.editingCandidate.avatar || null
@@ -302,14 +310,14 @@ watch(
       } else {
         currentCV.value = null
       }
-    } else {
+    } else { // reset form về rỗng nếu đang là add mới
       form.value = EMPTY_FORM()
       currentAvatar.value = null
       currentCV.value = null
     }
   },
 )
-
+// Watch để khi người dùng nhập vào form thì nếu có lỗi thì xóa lỗi đó đi, tránh việc đã nhập đúng nhưng vẫn hiện lỗi
 watch(() => form.value.fullName,    (v) => { if (v?.trim()) errors.value.fullName = '' })
 watch(() => form.value.country,     (v) => { if (v?.trim()) errors.value.country  = '' })
 watch(() => form.value.province,    (v) => { if (v)         errors.value.province = '' })
@@ -317,6 +325,7 @@ watch(() => form.value.dob,         (v) => { if (v && new Date(v) <= new Date())
 watch(() => form.value.phoneNumber, (v) => { if (/^0[0-9]{9}$/.test(v)) errors.value.phoneNumber = '' })
 watch(() => form.value.email,       (v) => { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) errors.value.email = '' })
 
+// Hàm xử lý khi chọn ảnh đại diện mới
 function onAvatarChange(e) {
   const file = e.target.files[0]
   if (!file || !file.type.startsWith('image/')) return
@@ -326,14 +335,17 @@ function onAvatarChange(e) {
   e.target.value = ''
 }
 
+// Hàm xử lý khi chọn CV mới, kiểm tra định dạng và dung lượng file, sau đó đọc file và lưu vào currentCV để hiển thị preview
 const CV_EXT = ['.doc', '.docx', '.pdf', '.jpg', '.jpeg', '.png']
 const CV_MAX = 15 * 1024 * 1024
 
+// hàm định dạng dung lượng file cho dễ đọc, ví dụ 1024 => 1 KB, 1048576 => 1 MB
 function formatSize(bytes) {
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
 }
 
+// Hàm xử lý khi chọn CV mới
 function onCVInputChange(e) {
   const file = e.target.files[0]
   if (!file) return
@@ -354,6 +366,7 @@ function onCVInputChange(e) {
   e.target.value = ''
 }
 
+// Hàm validate form, trả về true nếu hợp lệ, false nếu có lỗi, đồng thời lưu lỗi vào errors để hiển thị
 function validate() {
   const e = {}
   if (!form.value.fullName) e.fullName = 'Vui lòng nhập họ và tên'
@@ -365,23 +378,32 @@ function validate() {
   if (!form.value.province) e.province = 'Vui lòng chọn tỉnh / thành phố'
   if (!form.value.dob) e.dob = 'Vui lòng nhập ngày sinh'
   else if (new Date(form.value.dob) > new Date()) e.dob = 'Ngày sinh không hợp lệ'
+  // lưu lỗi vào errors để hiển thị
   errors.value = e
+  // nếu có lỗi thì trả về false để không lưu, ngược lại trả về true để cho phép lưu
   return Object.keys(e).length === 0
 }
 
-function handleSave() {
+// Hàm xử lý khi click lưu thông tin ứng viên, validate form rồi mới emit sự kiện saved lên cho cha xử lý (thêm mới hoặc cập nhật)
+function handleSaved() {
+  // validate form, nếu có lỗi thì không emit sự kiện saved, đồng thời focus vào ô input đầu tiên có lỗi
   if (!validate()) {
+    // ưu tiên focus vào ô input của các field theo thứ tự fullName, dob, phoneNumber, email, country, province
     const ORDER = ['fullName', 'dob', 'phoneNumber', 'email', 'country', 'province']
+
+    // tìm key đầu tiên có lỗi rồi focus vào ô input tương ứng
     const firstKey = ORDER.find((k) => errors.value[k])
+    // nếu tìm thấy key có lỗi thì focus vào ô input tương ứng
     if (firstKey) nextTick(() => fieldRefMap[firstKey]?.value?.focus())
     return
   }
 
-
+  // emit sự kiện saved kèm theo dữ liệu form,
   emit('saved', {
     ...form.value,
     avatar: currentAvatar.value,
     cv: currentCV.value,
+    // nếu đang edit thì có employeeId, ngược lại là đang thêm mới nên không có employeeId, form sẽ tự hiểu là thêm mới
     employeeId: props.editingCandidate?.employeeId,
   })
 }
