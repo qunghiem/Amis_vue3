@@ -1,6 +1,6 @@
 <template>
   <button :class="btnClass" :disabled="disabled || loading" v-bind="$attrs">
-    <!-- Spinner khi loading -->
+    <!-- loading -->
     <span v-if="loading" class="ms-btn__spinner"></span>
 
     <!-- Icon Bên Trái -->

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 // import danh sách mock data
 import { employees as defaultData } from '@/data/candidates'
 
@@ -19,6 +19,9 @@ export const useCandidateStore = defineStore('candidates', () => {
   // Set lưu id được tích chọn checked
   const selectedIds = ref(new Set())
 
+    // debounced keyword
+  const debouncedKeyword = ref('')
+  let debounceTimer = null
   // hàm khởi tạo
   function init() {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -39,20 +42,40 @@ export const useCandidateStore = defineStore('candidates', () => {
   }
 
   // hàm tìm kiếm ứng viên theo tên sđt email
-  const filteredCandidates = computed(() => {
-    // chuẩn hóa keyword: xóa khoảng trắng 2 đầu, chuyển về chữ thường để so sánh cho dễ
-    const keyWord = searchKeyword.value.trim().toLowerCase()
-    // nếu keyword rỗng thì trả về toàn bộ danh sách
-    if (!keyWord) return candidates.value
-    // nếu có keyword thì filter theo tên, sđt, email
-    return candidates.value.filter(
-      (c) =>
-        c.fullName?.toLowerCase().includes(keyWord) ||
-        c.phoneNumber?.toLowerCase().includes(keyWord) ||
-        c.email?.toLowerCase().includes(keyWord),
-    )
-  })
+  // const filteredCandidates = computed(() => {
+  //   const keyWord = searchKeyword.value.trim().toLowerCase()
+  //   // nếu keyword rỗng thì trả về toàn bộ danh sách
+  //   if (!keyWord) return candidates.value
+  //   // nếu có keyword thì filter theo tên, sđt, email
+  //   return candidates.value.filter(
+  //     (c) =>
+  //       c.fullName?.toLowerCase().includes(keyWord) ||
+  //       c.phoneNumber?.toLowerCase().includes(keyWord) ||
+  //       c.email?.toLowerCase().includes(keyWord),
+  //   )
+  // })
 
+
+
+// Watch searchKeyword và debounce
+watch(searchKeyword, (newVal) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    debouncedKeyword.value = newVal
+  }, 300)
+})
+
+// hàm tìm kiếm ứng viên theo tên sđt email: sử dụng debouncedKeyword
+const filteredCandidates = computed(() => {
+  const keyWord = debouncedKeyword.value.trim().toLowerCase()
+  if (!keyWord) return candidates.value
+  return candidates.value.filter(
+    (c) =>
+      c.fullName?.toLowerCase().includes(keyWord) ||
+      c.phoneNumber?.toLowerCase().includes(keyWord) ||
+      c.email?.toLowerCase().includes(keyWord),
+  )
+})
   // tổng số bản ghi sau khi filter
   const totalFiltered = computed(() => filteredCandidates.value.length)
 

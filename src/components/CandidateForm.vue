@@ -381,7 +381,6 @@ function validate() {
   return Object.values(errors.value).every(e => !e)
 }
 
-// Hàm xử lý khi click lưu thông tin ứng viên, validate form rồi mới emit sự kiện saved lên cho cha xử lý (thêm mới hoặc cập nhật)
 function handleSaved() {
   // validate form, nếu có lỗi thì không emit sự kiện saved, đồng thời focus vào ô input đầu tiên có lỗi
   if (!validate()) {

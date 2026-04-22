@@ -13,10 +13,8 @@
         <div class="recruitment-page__icon"></div>
         <div class="recruitment-page__text">Website tuyển dụng</div>
       </div>
-      <div class="icon-header"><div class="header__notification"></div></div>
       <div class="icon-header"><div class="header__store"></div></div>
       <div class="icon-header"><div class="header__help"></div></div>
-      <div class="icon-header"><div class="header__notification"></div></div>
       <div class="icon-header"><div class="header__store"></div></div>
       <div class="icon-header"><div class="header__help"></div></div>
 
