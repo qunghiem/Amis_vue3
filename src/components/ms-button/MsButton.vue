@@ -278,4 +278,13 @@ const btnClass = computed(() => [
   display: inline-flex;
   align-items: center;
 }
+
+.ms-btn--danger-confirm {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+}
+.ms-btn--danger-confirm:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
 </style>

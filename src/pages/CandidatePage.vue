@@ -46,7 +46,7 @@
       </div>
 
       <!-- Table -->
-      <CandidateTable :candidates="store.pageData" @edit="openEditModal" @delete="handleDelete" />
+      <CandidateTable :candidates="store.pageData" @edit="openEditModal" @delete="openDeleteConfirm" />
 
       <!-- Footer pagination -->
       <div class="foot-table">
@@ -110,16 +110,28 @@
     @close="closeModal"
     @saved="handleSaved"
   />
+
+  <ConfirmModal
+  :visible="confirmState.visible"
+  :title="confirmState.title"
+  :message="confirmState.message"
+  type="danger"
+  confirm-text="Xoá"
+  @confirm="onConfirm"
+  @cancel="closeConfirm"
+/>
+/>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useCandidateStore } from '@/stores/candidateStore'
 import { useToast } from '@/composables/useToast'
 import CandidateTable from '@/components/CandidateTable.vue'
 import CandidateForm from '@/components/CandidateForm.vue'
 import OverflowMenu from '@/components/OverflowMenu.vue'
 import MsButton from '@/components/ms-button/MsButton.vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const store = useCandidateStore()
 const toast = useToast()
@@ -131,6 +143,13 @@ const formVisible = ref(false)
 const editingCandidate = ref(null)
 
 const saving = ref(false)
+
+const confirmState = reactive({
+  visible: false,
+  title: '',
+  message: '',
+  onConfirm: null,
+})
 
 // Khởi tạo dữ liệu ứng viên từ Storage khi component được mounted
 onMounted(() => store.init())
@@ -177,9 +196,28 @@ async function handleSaved(data) {
   }
 }
 
+
+function openDeleteConfirm(id) {
+  const name = store.getById(id)?.fullName || 'ứng viên này'
+  confirmState.title = 'Xoá ứng viên'
+  confirmState.message = `Bạn có chắc muốn xoá ứng viên "${name}"? Thao tác này không thể hoàn tác.`
+  confirmState.onConfirm = () => handleDelete(id)
+  confirmState.visible = true
+}
+
+function closeConfirm() {
+  confirmState.visible = false
+  confirmState.onConfirm = null
+}
+
+async function onConfirm() {
+  const callback = confirmState.onConfirm
+  closeConfirm()
+  if (callback) await callback()
+}
+
 // Hàm xử lý khi xóa ứng viên
 async function handleDelete(id) {
-  if (!confirm('Bạn có chắc muốn xóa ứng viên này?')) return
   const tid = toast.loading('Đang xóa...')
   try {
     await store.deleteById(id)
@@ -193,13 +231,18 @@ async function handleDelete(id) {
 async function handleMenuAction(id) {
   if (id !== 'delete-selected') return
   const ids = store.selectedIdList
-  if (!ids.length || !confirm(`Xóa ${ids.length} ứng viên đã chọn?`)) return
-  const tid = toast.loading('Đang xóa...')
-  try {
-    await store.deleteByIds(ids)
-    toast.update(tid, `✅ Đã xóa ${ids.length} ứng viên!`, 'success')
-  } catch (err) {
-    toast.update(tid, `❌ ${err.message}`, 'error')
+  if (!ids.length) return
+  confirmState.title = 'Xoá nhiều ứng viên'
+  confirmState.message = `Bạn có chắc muốn xoá ${ids.length} ứng viên đã chọn? Thao tác này không thể hoàn tác.`
+  confirmState.onConfirm = async () => {
+    const tid = toast.loading('Đang xóa...')
+    try {
+      await store.deleteByIds(ids)
+      toast.update(tid, `✅ Đã xóa ${ids.length} ứng viên!`, 'success')
+    } catch (err) {
+      toast.update(tid, `❌ ${err.message}`, 'error')
+    }
   }
+  confirmState.visible = true
 }
 </script>

@@ -130,4 +130,13 @@ function onOverlayClick() {
   background: #f9fafb;
   flex-shrink: 0;
 }
+
+.ms-btn--danger-confirm {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+}
+.ms-btn--danger-confirm:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
 </style>
