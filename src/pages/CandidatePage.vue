@@ -26,7 +26,7 @@
       </div>
 
       <!-- Search & filter bar -->
-       <!-- // chỉ hiện khi k chọn checked ai  -->
+      <!-- // chỉ hiện khi k chọn checked ai  -->
       <div class="content__nav" :class="{ 'display-none': store.selectedCount > 0 }">
         <div class="content__search">
           <div class="icon-search-ami"></div>
@@ -73,6 +73,34 @@
         </div>
       </div>
     </div>
+    <div
+      v-if="store.error"
+      style="
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #991b1b;
+        padding: 10px 16px;
+        font-size: 14px;
+        margin: 0 20px 10px;
+        border-radius: 6px;
+      "
+    >
+      ⚠️ {{ store.error }}
+      <button
+        @click="store.fetchPage()"
+        style="
+          margin-left: 12px;
+          border: 1px solid #dc2626;
+          background: transparent;
+          color: #dc2626;
+          padding: 2px 10px;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        Thử lại
+      </button>
+    </div>
   </main>
 
   <!-- Add / Edit Modal -->
@@ -101,6 +129,8 @@ const formVisible = ref(false)
 
 // Dữ liệu ứng viên đang được chỉnh sửa
 const editingCandidate = ref(null)
+
+const saving = ref(false)
 
 // Khởi tạo dữ liệu ứng viên từ Storage khi component được mounted
 onMounted(() => store.init())
@@ -132,37 +162,44 @@ function closeModal() {
 }
 
 // Hàm xử lý khi form thêm mới / sửa thông tin ứng viên được lưu lại
-function handleSaved(data) {
-  // nếu data có employeeId nghĩa là đang sửa thông tin ứng viên, ngược lại là đang thêm mới
-  if (data.employeeId) {
-    store.updateCandidate(data)
-    toast.success('✅ Cập nhật thông tin thành công!')
-  } else {
-    store.addCandidate(data)
-    toast.success('✅ Thêm ứng viên thành công!')
+async function handleSaved(data) {
+  if (saving.value) return
+  saving.value = true
+  const tid = toast.loading(data.employeeId ? 'Đang cập nhật...' : 'Đang thêm mới...')
+  try {
+    data.employeeId ? await store.updateCandidate(data) : await store.addCandidate(data)
+    toast.update(tid, '✅ Lưu thành công!', 'success')
+    closeModal()
+  } catch (err) {
+    toast.update(tid, `❌ ${err.message}`, 'error')
+  } finally {
+    saving.value = false
   }
-  // đóng modal sau khi lưu thành công
-  closeModal()
 }
 
 // Hàm xử lý khi xóa ứng viên
-function handleDelete(id) {
+async function handleDelete(id) {
   if (!confirm('Bạn có chắc muốn xóa ứng viên này?')) return
-  store.deleteById(id)
-  toast.success('✅ Xóa ứng viên thành công!')
+  const tid = toast.loading('Đang xóa...')
+  try {
+    await store.deleteById(id)
+    toast.update(tid, '✅ Xóa thành công!', 'success')
+  } catch (err) {
+    toast.update(tid, `❌ ${err.message}`, 'error')
+  }
 }
 
 // Hàm xử lý khi chọn các action Xóa đã chọn trong menu dropdown
-function handleMenuAction(id) {
-
-  if (id === 'delete-selected') {
-    const ids = store.selectedIdList // Lấy danh sách id của các ứng viên đang được chọn
-    if (!ids.length) return
-    if (!confirm(`Bạn có chắc muốn xóa ${ids.length} ứng viên đã chọn?`)) return
-    store.deleteByIds(ids)
-    toast.success(`Đã xóa ${ids.length} ứng viên!`)
-  } else {
-    console.log('Menu action:', id, '| Selected:', store.selectedIdList)
+async function handleMenuAction(id) {
+  if (id !== 'delete-selected') return
+  const ids = store.selectedIdList
+  if (!ids.length || !confirm(`Xóa ${ids.length} ứng viên đã chọn?`)) return
+  const tid = toast.loading('Đang xóa...')
+  try {
+    await store.deleteByIds(ids)
+    toast.update(tid, `✅ Đã xóa ${ids.length} ứng viên!`, 'success')
+  } catch (err) {
+    toast.update(tid, `❌ ${err.message}`, 'error')
   }
 }
 </script>

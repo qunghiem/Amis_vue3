@@ -6,7 +6,6 @@
       <span v-if="required" class="ms-input__require">*</span>
     </label>
 
-    <!-- Control -->
      <div class="ms-input__control">
       <!-- Select -->
        <select

@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CandidatePage from '@/pages/CandidatePage.vue'
 import NewsPage from '@/pages/NewsPage.vue'
-import InventoryItemList from '@/views/DI/InventoryItem/InventoryItemList.vue'
 
 const routes = [
   { path: '/', redirect: '/candidates' },
