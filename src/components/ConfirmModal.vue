@@ -26,6 +26,7 @@ import MsModal from './ms-modal/MsModal.vue'
 import MsButton from './ms-button/MsButton.vue'
 
 const props = defineProps({
+
   visible: {
     type: Boolean,
     default: false,

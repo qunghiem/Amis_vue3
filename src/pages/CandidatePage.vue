@@ -46,7 +46,11 @@
       </div>
 
       <!-- Table -->
-      <CandidateTable :candidates="store.pageData" @edit="openEditModal" @delete="openDeleteConfirm" />
+      <CandidateTable
+        :candidates="store.pageData"
+        @edit="openEditModal"
+        @delete="openDeleteConfirm"
+      />
 
       <!-- Footer pagination -->
       <div class="foot-table">
@@ -112,15 +116,15 @@
   />
 
   <ConfirmModal
-  :visible="confirmState.visible"
-  :title="confirmState.title"
-  :message="confirmState.message"
-  type="danger"
-  confirm-text="Xoá"
-  @confirm="onConfirm"
-  @cancel="closeConfirm"
-/>
-/>
+    :visible="confirmState.visible"
+    :title="confirmState.title"
+    :message="confirmState.message"
+    type="danger"
+    confirm-text="Xoá"
+    @confirm="onConfirm"
+    @cancel="closeConfirm"
+  />
+  />
 </template>
 
 <script setup>
@@ -156,6 +160,7 @@ onMounted(() => store.init())
 
 // Hàm xử lý khi nhập từ ô tìm kiếm
 function onSearch(e) {
+  //
   store.searchKeyword = e.target.value
   store.resetPage()
 }
@@ -180,10 +185,12 @@ function closeModal() {
   editingCandidate.value = null
 }
 
+//
 // Hàm xử lý khi form thêm mới / sửa thông tin ứng viên được lưu lại
 async function handleSaved(data) {
   if (saving.value) return
   saving.value = true
+  //
   const tid = toast.loading(data.employeeId ? 'Đang cập nhật...' : 'Đang thêm mới...')
   try {
     data.employeeId ? await store.updateCandidate(data) : await store.addCandidate(data)
@@ -196,23 +203,26 @@ async function handleSaved(data) {
   }
 }
 
-
 function openDeleteConfirm(id) {
   const name = store.getById(id)?.fullName || 'ứng viên này'
   confirmState.title = 'Xoá ứng viên'
   confirmState.message = `Bạn có chắc muốn xoá ứng viên "${name}"? Thao tác này không thể hoàn tác.`
+  // lấy ra hàm thực thi nếu user click Xóa, chưa chạy luôn
   confirmState.onConfirm = () => handleDelete(id)
   confirmState.visible = true
 }
 
+// hàm đóng model comfirm khi user click hủy
 function closeConfirm() {
   confirmState.visible = false
   confirmState.onConfirm = null
 }
 
+// hàm thực hiện callback handleDelete(id) khi user click Xóa
 async function onConfirm() {
   const callback = confirmState.onConfirm
   closeConfirm()
+  // thực thi handleDelete(id)
   if (callback) await callback()
 }
 
@@ -220,6 +230,7 @@ async function onConfirm() {
 async function handleDelete(id) {
   const tid = toast.loading('Đang xóa...')
   try {
+    //
     await store.deleteById(id)
     toast.update(tid, '✅ Xóa thành công!', 'success')
   } catch (err) {
